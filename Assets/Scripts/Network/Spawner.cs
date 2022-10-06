@@ -11,7 +11,6 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 
     //Other compoents
     CharacterInputHandler characterInputHandler;
-    List<int> foundedPlayerNotReconnect = new List<int>();
     // Mapping between Token ID and Re-created Players
     Dictionary<int, NetworkPlayer> mapTokenIDWithNetworkPlayer;
     // Start is called before the first frame update
@@ -129,20 +128,9 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
             if (networkObjectInDictionary.InputAuthority.IsNone)
             {
                 Debug.Log($"{Time.time} Found player that has not reconnected. Despawning {entry.Value.nickName}");
-                foundedPlayerNotReconnect.Add(entry.Key);
                 networkObjectInDictionary.Runner.Despawn(networkObjectInDictionary);
                 
             }
-        }
-
-        // clear player Dictionary
-        if (foundedPlayerNotReconnect.Count > 0)
-        {
-            foreach (var index in foundedPlayerNotReconnect)
-            {
-                mapTokenIDWithNetworkPlayer.Remove(index);
-            }
-            foundedPlayerNotReconnect.Clear();
         }
         Debug.Log("Spawner OnHostMigrationCleanUp completed");
     }
