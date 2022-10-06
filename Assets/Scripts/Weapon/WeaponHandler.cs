@@ -137,7 +137,7 @@ public class WeaponHandler : NetworkBehaviour
                     );
                 });
             
-            rockedTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 5.0F);
+            rockedTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 3.5F);
         }
     }
     
