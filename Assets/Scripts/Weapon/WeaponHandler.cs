@@ -5,23 +5,37 @@ using Fusion;
 
 public class WeaponHandler : NetworkBehaviour
 {
-    [Networked(OnChanged = nameof(OnFireChanged))]
-    public bool isFiring { get; set; }
-
+    [Header("Prefabs")] 
+    public GrenadeHandler grenadeHandler;
+    public RocketHandler rockedHandler;
+    
+    [Header("ParticleSystem")] 
     public ParticleSystem fireParticleSystem;
+    
+    [Header("Aim")] 
     public Transform aimPoint;
+    
+    [Header("Collision")] 
     public LayerMask collisionLayers;
 
+    [Networked(OnChanged = nameof(OnFireChanged))]
+    public bool isFiring { get; set; }
+    
     float lastTimeFired = 0;
+    private TickTimer grenadeTimerFiredDelay = TickTimer.None;
+    private TickTimer rockedTimerFiredDelay = TickTimer.None;
+    
 
     //Other components
-    HPHandler hpHandler;
-    NetworkPlayer networkPlayer;
-
+    private HPHandler hpHandler;
+    private NetworkPlayer networkPlayer;
+    private NetworkObject networkObject;
+    
     private void Awake()
     {
         hpHandler = GetComponent<HPHandler>();
         networkPlayer = GetBehaviour<NetworkPlayer>();
+        networkObject = GetComponent<NetworkObject>();
     }
 
     // Start is called before the first frame update
@@ -40,6 +54,12 @@ public class WeaponHandler : NetworkBehaviour
         {
             if (networkInputData.isFireButtonPressed)
                 Fire(networkInputData.aimForwardVector);
+            
+            if (networkInputData.isGrenadeFireButtonPressed)
+                FireGrenade(networkInputData.aimForwardVector);
+            
+            if (networkInputData.isRocketFireButtonPressed)
+                FireRocked(networkInputData.aimForwardVector);
         }
     }
 
@@ -81,6 +101,46 @@ public class WeaponHandler : NetworkBehaviour
 
         lastTimeFired = Time.time;
     }
+    
+    
+    void FireGrenade(Vector3 aimForwardVector)
+    {
+        if (grenadeTimerFiredDelay.ExpiredOrNotRunning(Runner))
+        {
+            Runner.Spawn(grenadeHandler,
+                aimPoint.position + aimForwardVector * 1.5F,
+                Quaternion.LookRotation(aimForwardVector),
+                Object.InputAuthority, (runner, spwnedGrenade) =>
+                {
+                    spwnedGrenade.GetComponent<GrenadeHandler>().Throw(aimForwardVector * 15,
+                        Object.InputAuthority,
+                        networkPlayer.nickName.ToString()
+                    );
+                });
+            
+            grenadeTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 1.0F);
+        }
+    }
+    
+    void FireRocked(Vector3 aimForwardVector)
+    {
+        if (rockedTimerFiredDelay.ExpiredOrNotRunning(Runner))
+        {
+            Runner.Spawn(rockedHandler,
+                aimPoint.position + aimForwardVector * 1.5F,
+                Quaternion.LookRotation(aimForwardVector),
+                Object.InputAuthority, (runner, spwnedRocked) =>
+                {
+                    spwnedRocked.GetComponent<RocketHandler>().Fire(Object.InputAuthority,
+                        networkObject,
+                        networkPlayer.nickName.ToString()
+                    );
+                });
+            
+            rockedTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 5.0F);
+        }
+    }
+    
 
     IEnumerator FireEffectCO()
     {

@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using TMPro;
 using UnityEngine.UI;
 
 public class HPHandler : NetworkBehaviour
 {
+    const byte startingHP = 5;
+    
     [Networked(OnChanged = nameof(OnHPChanged))]
     byte HP { get; set; }
 
@@ -13,9 +16,7 @@ public class HPHandler : NetworkBehaviour
     public bool isDead { get; set; }
 
     bool isInitialized = false;
-
-    const byte startingHP = 5;
-
+    
     public Color uiOnHitColor;
     public Image uiOnHitImage;
 
@@ -24,7 +25,8 @@ public class HPHandler : NetworkBehaviour
 
     public GameObject playerModel;
     public GameObject deathGameObjectPrefab;
-
+    public TextMeshProUGUI textHP;
+    
     public bool skipSettingStartValues = false;
     
     //Other components
@@ -47,6 +49,7 @@ public class HPHandler : NetworkBehaviour
         if (!skipSettingStartValues)
         {
             HP = startingHP;
+            textHP.text = "HP "+HP;
             isDead = false;
         }
 
@@ -79,14 +82,18 @@ public class HPHandler : NetworkBehaviour
 
 
     //Function only called on the server
-    public void OnTakeDamage(string damageCausedByPlayerNickname)
+    public void OnTakeDamage(string damageCausedByPlayerNickname, byte damage = 1)
     {
         //Only take damage while alive
         if (isDead)
             return;
 
-        HP -= 1;
-
+        if (damage > HP)
+            damage = HP;
+        
+        HP -= damage;
+        textHP.text = "HP "+HP;
+        
         Debug.Log($"{Time.time} {transform.name} took damage got {HP} left ");
 
         //Player died
@@ -171,6 +178,7 @@ public class HPHandler : NetworkBehaviour
     {
         //Reset variables
         HP = startingHP;
+        textHP.text = "HP "+HP;
         isDead = false;
     }
 }
