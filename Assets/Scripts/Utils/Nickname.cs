@@ -9,11 +9,8 @@ public class Nickname : MonoBehaviour
     
     void Start()
     {
-        //_mainCamera = Camera.main.transform;
-
         var cam = Camera.allCameras;
         _mainCamera = cam[0].transform;
-//Debug.Log("!!!!!!!!!!!!!!!!!!!!!"+cam.Length);
     }
 
     // Update is called once per frame

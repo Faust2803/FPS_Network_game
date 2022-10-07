@@ -3,39 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GrenadeHandler : NetworkBehaviour
 {
-   private const byte second = 2;
-
+   private const byte SECOND = 2;
+   
    [Header("Prefabs")] 
-   public GameObject explosionParticleSystemPrefab;
+   [SerializeField] private GameObject _explosionParticleSystemPrefab;
    [Header("Particles")] 
-   public ParticleSystem landingParticleSystem;
+   [SerializeField] private ParticleSystem _landingParticleSystem;
    [Header("Collision detection")] 
-   public LayerMask collisionLayers;
+   [SerializeField] private LayerMask _collisionLayers;
    
-   private PlayerRef throwByPlayerRef;
-   private string throwByPlayerName;
+   private PlayerRef _throwByPlayerRef;
+   private string _throwByPlayerName;
    
-   TickTimer explodeTickTimer = TickTimer.None;
+   private TickTimer _explodeTickTimer = TickTimer.None;
 
-   private List<LagCompensatedHit> hits = new List<LagCompensatedHit>();
+   private List<LagCompensatedHit> _hits = new List<LagCompensatedHit>();
 
-   private NetworkObject networkObject;
-   private NetworkRigidbody networkRigidbody;
+   private NetworkObject _networkObject;
+   private NetworkRigidbody _networkRigidbody;
    
    public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, string throwByPlayerName)
    {
-      networkObject = GetComponent<NetworkObject>();
-      networkRigidbody = GetComponent<NetworkRigidbody>();
+      _networkObject = GetComponent<NetworkObject>();
+      _networkRigidbody = GetComponent<NetworkRigidbody>();
       
-      networkRigidbody.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
+      _networkRigidbody.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
 
-      this.throwByPlayerRef = throwByPlayerRef;
-      this.throwByPlayerName = throwByPlayerName;
+      _throwByPlayerRef = throwByPlayerRef;
+      _throwByPlayerName = throwByPlayerName;
 
-      explodeTickTimer = TickTimer.CreateFromSeconds(Runner, second);
+      _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
       
    }
 
@@ -43,29 +44,29 @@ public class GrenadeHandler : NetworkBehaviour
    {
       // if (Object.HasInputAuthority)
       // {
-      if (explodeTickTimer.Expired(Runner))
+      if (_explodeTickTimer.Expired(Runner))
          {
             int hitCounter =
                Runner.LagCompensation.OverlapSphere(transform.position,
                   10,
-                  throwByPlayerRef, 
-                  hits, 
-                  collisionLayers
+                  _throwByPlayerRef, 
+                  _hits, 
+                  _collisionLayers
                   );
 
             for (var i = 0; i < hitCounter; i++)
             {
-               HPHandler hpHandler = hits[i].Hitbox.transform.root.GetComponent<HPHandler>();
+               HPHandler hpHandler = _hits[i].Hitbox.transform.root.GetComponent<HPHandler>();
 
                if (hpHandler != null)
                {
-                  hpHandler.OnTakeDamage(throwByPlayerName, 3);
+                  hpHandler.OnTakeDamage(_throwByPlayerName, 3);
                }
             }
             
-            Runner.Despawn(networkObject);
+            Runner.Despawn(_networkObject);
             
-            explodeTickTimer = TickTimer.None;
+            _explodeTickTimer = TickTimer.None;
          }
       //}
    }
@@ -74,11 +75,11 @@ public class GrenadeHandler : NetworkBehaviour
    {
       MeshRenderer grenadeMesh = GetComponentInChildren<MeshRenderer>();
 
-      Instantiate(explosionParticleSystemPrefab, grenadeMesh.transform.position, Quaternion.identity);
+      Instantiate(_explosionParticleSystemPrefab, grenadeMesh.transform.position, Quaternion.identity);
    }
 
    private void OnCollisionEnter(Collision collision)
    {
-      landingParticleSystem.Play();
+      _landingParticleSystem.Play();
    }
 }
