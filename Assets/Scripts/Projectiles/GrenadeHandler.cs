@@ -15,7 +15,7 @@ public class GrenadeHandler : NetworkBehaviour
    [Header("Collision detection")] 
    public LayerMask collisionLayers;
    
-   private PlayerRef throwByPlayerRefl;
+   private PlayerRef throwByPlayerRef;
    private string throwByPlayerName;
    
    TickTimer explodeTickTimer = TickTimer.None;
@@ -32,22 +32,23 @@ public class GrenadeHandler : NetworkBehaviour
       
       networkRigidbody.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
 
-      this.throwByPlayerRefl = throwByPlayerRef;
+      this.throwByPlayerRef = throwByPlayerRef;
       this.throwByPlayerName = throwByPlayerName;
 
       explodeTickTimer = TickTimer.CreateFromSeconds(Runner, second);
+      
    }
 
    public override void FixedUpdateNetwork()
    {
-      if (Object.HasInputAuthority)
-      {
-         if (explodeTickTimer.Expired(Runner))
+      // if (Object.HasInputAuthority)
+      // {
+      if (explodeTickTimer.Expired(Runner))
          {
             int hitCounter =
                Runner.LagCompensation.OverlapSphere(transform.position,
                   10,
-                  throwByPlayerRefl, 
+                  throwByPlayerRef, 
                   hits, 
                   collisionLayers
                   );
@@ -66,7 +67,7 @@ public class GrenadeHandler : NetworkBehaviour
             
             explodeTickTimer = TickTimer.None;
          }
-      }
+      //}
    }
 
    public override void Despawned(NetworkRunner runner, bool hasState)

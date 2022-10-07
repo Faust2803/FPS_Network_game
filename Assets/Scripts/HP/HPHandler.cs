@@ -68,7 +68,7 @@ public class HPHandler : NetworkBehaviour
         yield return new WaitForSeconds(0.2f);
 
         bodyMeshRenderer.material.color = defaultMeshBodyColor;
-
+        textHP.text = "HP "+HP;
         if (Object.HasInputAuthority && !isDead)
             uiOnHitImage.color = new Color(0, 0, 0, 0);
     }

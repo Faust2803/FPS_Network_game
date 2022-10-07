@@ -110,15 +110,15 @@ public class WeaponHandler : NetworkBehaviour
             Runner.Spawn(grenadeHandler,
                 aimPoint.position + aimForwardVector * 1.5F,
                 Quaternion.LookRotation(aimForwardVector),
-                Object.InputAuthority, (runner, spwnedGrenade) =>
+                Object.InputAuthority, (runner, spawnedGrenade) =>
                 {
-                    spwnedGrenade.GetComponent<GrenadeHandler>().Throw(aimForwardVector * 15,
+                    spawnedGrenade.GetComponent<GrenadeHandler>().Throw(aimForwardVector * 15,
                         Object.InputAuthority,
                         networkPlayer.nickName.ToString()
                     );
                 });
             
-            grenadeTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 1.0F);
+            grenadeTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 2.0F);
         }
     }
     
@@ -129,9 +129,9 @@ public class WeaponHandler : NetworkBehaviour
             Runner.Spawn(rockedHandler,
                 aimPoint.position + aimForwardVector * 1.5F,
                 Quaternion.LookRotation(aimForwardVector),
-                Object.InputAuthority, (runner, spwnedRocked) =>
+                Object.InputAuthority, (runner, spawnedRocked) =>
                 {
-                    spwnedRocked.GetComponent<RocketHandler>().Fire(Object.InputAuthority,
+                    spawnedRocked.GetComponent<RocketHandler>().Fire(Object.InputAuthority,
                         networkObject,
                         networkPlayer.nickName.ToString()
                     );
