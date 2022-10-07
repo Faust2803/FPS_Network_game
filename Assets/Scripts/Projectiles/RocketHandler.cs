@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -33,7 +32,6 @@ public class RocketHandler : NetworkBehaviour
         this.fireByPlayerName = fireByPlayerName;
         this.fireBynetworkObject = fireBynetworkObject;
         networkObject = GetComponent<NetworkObject>();
-
         explodeTickTimer = TickTimer.CreateFromSeconds(Runner, second);
     }
 
@@ -41,8 +39,8 @@ public class RocketHandler : NetworkBehaviour
     {
         transform.position += transform.forward * Runner.DeltaTime * rockedSpeed;
         
-        if (Object.HasInputAuthority)
-        {
+        // if (Object.HasInputAuthority)
+        // {
             if (explodeTickTimer.Expired(Runner))
             {
                 Runner.Despawn(networkObject);
@@ -59,14 +57,10 @@ public class RocketHandler : NetworkBehaviour
                 );
 
             var isValidHit = false;
-
-            
             if (hitCounter > 0)
             {
                 isValidHit = true;
             }
-               
-            
             for (var i = 0; i < hitCounter; i++)
             {
                 if (hits[i].Hitbox != null)
@@ -77,10 +71,9 @@ public class RocketHandler : NetworkBehaviour
                     }
                 }
             }
-            
-            
-            if (isValidHit)
-            {
+
+             if (isValidHit)
+             {
                 hitCounter = Runner.LagCompensation.OverlapSphere(checkForImpactPoint.position,
                     5,
                     fireByPlayerRef,
@@ -96,11 +89,11 @@ public class RocketHandler : NetworkBehaviour
                     {
                         hpHandler.OnTakeDamage(fireByPlayerName, 5);
                     }
-                }  
+                } 
                 
                 Runner.Despawn(networkObject);
             }
-        }
+        //}
     }
     
     public override void Despawned(NetworkRunner runner, bool hasState)

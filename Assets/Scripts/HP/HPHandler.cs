@@ -92,12 +92,12 @@ public class HPHandler : NetworkBehaviour
             damage = HP;
         
         HP -= damage;
-        textHP.text = "HP "+HP;
+        
         
         Debug.Log($"{Time.time} {transform.name} took damage got {HP} left ");
 
         //Player died
-        if (HP <= 0)
+        if (HP == 0)
         {
             networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayerNickname, $"Killed <b>{networkPlayer.nickName.ToString()}</b>");
 

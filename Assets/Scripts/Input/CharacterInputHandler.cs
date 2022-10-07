@@ -43,13 +43,13 @@ public class CharacterInputHandler : MonoBehaviour
         moveInputVector.y = Input.GetAxis("Vertical");
 
         //Jump
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetKeyDown(KeyCode.Space))
             isJumpButtonPressed = true;
 
         //Fire
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetMouseButtonDown(0))
             isFireButtonPressed = true;
-        if (Input.GetButtonDown("Fire2"))
+        if (Input.GetMouseButtonDown(1))
             isRockedFireButtonPressed = true;
 
         if (Input.GetKeyDown(KeyCode.G))
