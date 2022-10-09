@@ -46,7 +46,7 @@ public class WeaponHandler : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (hpHandler.isDead)
+        if (hpHandler.IsDead)
             return;
 
         //Get the input from the network

@@ -37,7 +37,7 @@ public class CharacterMovementHandler : NetworkBehaviour
             }
 
             //Don't update the clients position when they are dead
-            if (hpHandler.isDead)
+            if (hpHandler.IsDead)
                 return;
         }
 
