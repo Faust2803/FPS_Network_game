@@ -1,33 +1,26 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class InGameMessagesUIHander : MonoBehaviour
 {
-    public TextMeshProUGUI[] textMeshProUGUIs;
+    [SerializeField] private TextMeshProUGUI[] _textMeshProUGUIs;
 
-    Queue messageQueue = new Queue();
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private Queue _messageQueue = new Queue();
 
     public void OnGameMessageReceived(string message)
     {
         Debug.Log($"InGameMessagesUIHander {message}");
 
-        messageQueue.Enqueue(message);
+        _messageQueue.Enqueue(message);
 
-        if (messageQueue.Count > 3)
-            messageQueue.Dequeue();
+        if (_messageQueue.Count > 3)
+            _messageQueue.Dequeue();
 
         int queueIndex = 0;
-        foreach (string messageInQueue in messageQueue)
+        foreach (string messageInQueue in _messageQueue)
         {
-            textMeshProUGUIs[queueIndex].text = messageInQueue;
+            _textMeshProUGUIs[queueIndex].text = messageInQueue;
             queueIndex++;
         }
 

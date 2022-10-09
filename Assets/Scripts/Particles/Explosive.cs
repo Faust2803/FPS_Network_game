@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Explosive : MonoBehaviour
 {
-    public ParticleSystem[] particles;
+    [SerializeField] private ParticleSystem[] _particles;
     void Start()
     {
         float longestTime = 0;
-        foreach (var t in particles)
+        foreach (var t in _particles)
         {
             
             var duration = t.main.duration;
