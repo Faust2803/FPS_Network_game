@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
@@ -7,23 +6,18 @@ using System;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
-    public NetworkPlayer playerPrefab;
+    [SerializeField] private NetworkPlayer _playerPrefab;
 
     //Other compoents
-    CharacterInputHandler characterInputHandler;
+    private CharacterInputHandler _characterInputHandler;
     // Mapping between Token ID and Re-created Players
-    Dictionary<int, NetworkPlayer> mapTokenIDWithNetworkPlayer;
+    private Dictionary<int, NetworkPlayer> _mapTokenIDWithNetworkPlayer;
     // Start is called before the first frame update
     
     void Awake()
     {
         //Create a new Dictionary
-        mapTokenIDWithNetworkPlayer = new Dictionary<int, NetworkPlayer>();
-    }
-    
-    void Start()
-    {
-        
+        _mapTokenIDWithNetworkPlayer = new Dictionary<int, NetworkPlayer>();
     }
 
     int GetPlayerToken(NetworkRunner runner, PlayerRef player)
@@ -49,7 +43,7 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     
     public void SetConnectionTokenMapping(int token, NetworkPlayer networkPlayer)
     {
-        mapTokenIDWithNetworkPlayer.Add(token, networkPlayer);
+        _mapTokenIDWithNetworkPlayer.Add(token, networkPlayer);
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -62,7 +56,7 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
             Debug.Log($"OnPlayerJoined we are server. Connection token {playerToken}");
 
             //Check if the token is already recorded by the server. 
-            if (mapTokenIDWithNetworkPlayer.TryGetValue(playerToken, out NetworkPlayer networkPlayer))
+            if (_mapTokenIDWithNetworkPlayer.TryGetValue(playerToken, out NetworkPlayer networkPlayer))
             {
                 Debug.Log($"Found old connection token for token {playerToken}. Assigning controlls to that player");
 
@@ -73,13 +67,13 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
             else
             {
                 Debug.Log($"Spawning new player for connection token {playerToken}");
-                NetworkPlayer spawnedNetworkPlayer = runner.Spawn(playerPrefab, Utils.GetRandomSpawnPoint(), Quaternion.identity, player);
+                NetworkPlayer spawnedNetworkPlayer = runner.Spawn(_playerPrefab, Utils.GetRandomSpawnPoint(), Quaternion.identity, player);
 
                 //Store the token for the player
                 spawnedNetworkPlayer.token = playerToken;
 
                 //Store the mapping between playerToken and the spawned network player
-                mapTokenIDWithNetworkPlayer[playerToken] = spawnedNetworkPlayer;
+                _mapTokenIDWithNetworkPlayer[playerToken] = spawnedNetworkPlayer;
             }
         }
         else Debug.Log("OnPlayerJoined");
@@ -87,11 +81,11 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (characterInputHandler == null && NetworkPlayer.Local != null)
-            characterInputHandler = NetworkPlayer.Local.GetComponent<CharacterInputHandler>();
+        if (_characterInputHandler == null && NetworkPlayer.Local != null)
+            _characterInputHandler = NetworkPlayer.Local.GetComponent<CharacterInputHandler>();
 
-        if (characterInputHandler != null)
-            input.Set(characterInputHandler.GetNetworkInput());
+        if (_characterInputHandler != null)
+            input.Set(_characterInputHandler.GetNetworkInput());
 
     }
 
@@ -121,7 +115,7 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         Debug.Log("Spawner OnHostMigrationCleanUp started");
        
-        foreach (KeyValuePair<int, NetworkPlayer> entry in mapTokenIDWithNetworkPlayer)
+        foreach (KeyValuePair<int, NetworkPlayer> entry in _mapTokenIDWithNetworkPlayer)
         {
             NetworkObject networkObjectInDictionary = entry.Value.GetComponent<NetworkObject>();
 
