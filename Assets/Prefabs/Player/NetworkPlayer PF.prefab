@@ -605,15 +605,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  playerNickNameTM: {fileID: 7319436505145594861}
-  playerModel: {fileID: 8054853945983303956}
+  _playerNickNameTM: {fileID: 7319436505145594861}
+  _playerModel: {fileID: 8054853945983303956}
   _nickName:
     _length: 0
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _token: 0
-  localCameraHandler: {fileID: 246120406805321715}
-  localUI: {fileID: 6847442062705736821}
+  _localCameraHandler: {fileID: 246120406805321715}
+  _localUI: {fileID: 6847442062705736821}
 --- !u!114 &2188957561650592609
 MonoBehaviour:
   m_ObjectHideFlags: 0
