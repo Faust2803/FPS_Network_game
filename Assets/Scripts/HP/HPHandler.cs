@@ -3,81 +3,84 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using TMPro;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class HPHandler : NetworkBehaviour
 {
-    const byte startingHP = 5;
+     private const byte STARTING_HP = 5;
+     
+    [Networked(OnChanged = nameof(OnStateChanged))]
+    public bool IsDead { get; set; }
+    
+    [SerializeField] private Color _uiOnHitColor;
+    [SerializeField] private Image _uiOnHitImage;
+    [SerializeField] private MeshRenderer _bodyMeshRenderer;
+    [SerializeField] private GameObject _playerModel;
+    [SerializeField] private GameObject _deathGameObjectPrefab;
+    [SerializeField] private TextMeshProUGUI _textHP;
+    [SerializeField] private bool _skipSettingStartValues = false;
+
+    public bool SkipSettingStartValues
+    {
+        get => _skipSettingStartValues;
+        set => _skipSettingStartValues = value;
+    }
     
     [Networked(OnChanged = nameof(OnHPChanged))]
-    byte HP { get; set; }
-
-    [Networked(OnChanged = nameof(OnStateChanged))]
-    public bool isDead { get; set; }
-
-    bool isInitialized = false;
-    
-    public Color uiOnHitColor;
-    public Image uiOnHitImage;
-
-    public MeshRenderer bodyMeshRenderer;
-    Color defaultMeshBodyColor;
-
-    public GameObject playerModel;
-    public GameObject deathGameObjectPrefab;
-    public TextMeshProUGUI textHP;
-    
-    public bool skipSettingStartValues = false;
+    private byte HP { get; set; }
+    private bool _isInitialized = false;
+    private Color _defaultMeshBodyColor;
     
     //Other components
-    HitboxRoot hitboxRoot;
-    CharacterMovementHandler characterMovementHandler;
-    NetworkInGameMessages networkInGameMessages;
-    NetworkPlayer networkPlayer;
+    private HitboxRoot _hitboxRoot;
+    private CharacterMovementHandler _characterMovementHandler;
+    private NetworkInGameMessages _networkInGameMessages;
+    private NetworkPlayer _networkPlayer;
 
     private void Awake()
     {
-        characterMovementHandler = GetComponent<CharacterMovementHandler>();
-        hitboxRoot = GetComponentInChildren<HitboxRoot>();
-        networkInGameMessages = GetComponent<NetworkInGameMessages>();
-        networkPlayer = GetComponent<NetworkPlayer>();
+        _characterMovementHandler = GetComponent<CharacterMovementHandler>();
+        _hitboxRoot = GetComponentInChildren<HitboxRoot>();
+        _networkInGameMessages = GetComponent<NetworkInGameMessages>();
+        _networkPlayer = GetComponent<NetworkPlayer>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!skipSettingStartValues)
+        if (!_skipSettingStartValues)
         {
-            HP = startingHP;
-            textHP.text = "HP "+HP;
-            isDead = false;
+            HP = STARTING_HP;
+            _textHP.text = "HP "+HP;
+            IsDead = false;
         }
 
-        defaultMeshBodyColor = bodyMeshRenderer.material.color;
+        _defaultMeshBodyColor = _bodyMeshRenderer.material.color;
 
-        isInitialized = true;
+        _isInitialized = true;
     }
 
     IEnumerator OnHitCO()
     {
-        bodyMeshRenderer.material.color = Color.white;
+        _bodyMeshRenderer.material.color = Color.white;
 
         if (Object.HasInputAuthority)
-            uiOnHitImage.color = uiOnHitColor;
+            _uiOnHitImage.color = _uiOnHitColor;
 
         yield return new WaitForSeconds(0.2f);
 
-        bodyMeshRenderer.material.color = defaultMeshBodyColor;
-        textHP.text = "HP "+HP;
-        if (Object.HasInputAuthority && !isDead)
-            uiOnHitImage.color = new Color(0, 0, 0, 0);
+        _bodyMeshRenderer.material.color = _defaultMeshBodyColor;
+        _textHP.text = "HP "+HP;
+        if (Object.HasInputAuthority && !IsDead)
+            _uiOnHitImage.color = new Color(0, 0, 0, 0);
     }
 
     IEnumerator ServerReviveCO()
     {
         yield return new WaitForSeconds(2.0f);
 
-        characterMovementHandler.RequestRespawn();
+        _characterMovementHandler.RequestRespawn();
     }
 
 
@@ -85,7 +88,7 @@ public class HPHandler : NetworkBehaviour
     public void OnTakeDamage(string damageCausedByPlayerNickname, byte damage = 1)
     {
         //Only take damage while alive
-        if (isDead)
+        if (IsDead)
             return;
 
         if (damage > HP)
@@ -99,13 +102,13 @@ public class HPHandler : NetworkBehaviour
         //Player died
         if (HP == 0)
         {
-            networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayerNickname, $"Killed <b>{networkPlayer.nickName.ToString()}</b>");
+            _networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayerNickname, $"Killed <b>{_networkPlayer.nickName.ToString()}</b>");
 
             Debug.Log($"{Time.time} {transform.name} died");
 
             StartCoroutine(ServerReviveCO());
 
-            isDead = true;
+            IsDead = true;
         }
     }
 
@@ -127,7 +130,7 @@ public class HPHandler : NetworkBehaviour
 
     private void OnHPReduced()
     {
-        if (!isInitialized)
+        if (!_isInitialized)
             return;
 
         StartCoroutine(OnHitCO());
@@ -135,14 +138,14 @@ public class HPHandler : NetworkBehaviour
 
     static void OnStateChanged(Changed<HPHandler> changed)
     {
-        Debug.Log($"{Time.time} OnStateChanged isDead {changed.Behaviour.isDead}");
+        Debug.Log($"{Time.time} OnStateChanged IsDead {changed.Behaviour.IsDead}");
 
-        bool isDeadCurrent = changed.Behaviour.isDead;
+        bool isDeadCurrent = changed.Behaviour.IsDead;
 
         //Load the old value
         changed.LoadOld();
 
-        bool isDeadOld = changed.Behaviour.isDead;
+        bool isDeadOld = changed.Behaviour.IsDead;
 
         //Handle on death for the player. Also check if the player was dead but is now alive in that case revive the player.
         if (isDeadCurrent)
@@ -155,11 +158,11 @@ public class HPHandler : NetworkBehaviour
     {
         Debug.Log($"{Time.time} OnDeath");
 
-        playerModel.gameObject.SetActive(false);
-        hitboxRoot.HitboxRootActive = false;
-        characterMovementHandler.SetCharacterControllerEnabled(false);
+        _playerModel.gameObject.SetActive(false);
+        _hitboxRoot.HitboxRootActive = false;
+        _characterMovementHandler.SetCharacterControllerEnabled(false);
 
-        Instantiate(deathGameObjectPrefab, transform.position, Quaternion.identity);
+        Instantiate(_deathGameObjectPrefab, transform.position, Quaternion.identity);
     }
 
     private void OnRevive()
@@ -167,18 +170,18 @@ public class HPHandler : NetworkBehaviour
         Debug.Log($"{Time.time} OnRevive");
 
         if (Object.HasInputAuthority)
-            uiOnHitImage.color = new Color(0, 0, 0, 0);
+            _uiOnHitImage.color = new Color(0, 0, 0, 0);
 
-        playerModel.gameObject.SetActive(true);
-        hitboxRoot.HitboxRootActive = true;
-        characterMovementHandler.SetCharacterControllerEnabled(true);
+        _playerModel.gameObject.SetActive(true);
+        _hitboxRoot.HitboxRootActive = true;
+        _characterMovementHandler.SetCharacterControllerEnabled(true);
     }
 
     public void OnRespawned()
     {
         //Reset variables
-        HP = startingHP;
-        textHP.text = "HP "+HP;
-        isDead = false;
+        HP = STARTING_HP;
+        _textHP.text = "HP "+HP;
+        IsDead = false;
     }
 }

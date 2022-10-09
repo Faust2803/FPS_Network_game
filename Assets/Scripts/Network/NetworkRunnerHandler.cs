@@ -107,7 +107,7 @@ public class NetworkRunnerHandler : MonoBehaviour
                         HPHandler newHPHandler = newNetworkObject.GetComponent<HPHandler>();
                         newHPHandler.CopyStateFrom(oldHPHandler);
 
-                        newHPHandler.skipSettingStartValues = true;
+                        newHPHandler.SkipSettingStartValues = true;
                     }
 
                     //Map the connection token with the new Network player

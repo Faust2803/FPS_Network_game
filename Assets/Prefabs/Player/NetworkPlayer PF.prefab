@@ -397,7 +397,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraAnchorPoint: {fileID: 8609938973519135566}
-  localCamera: {fileID: 0}
 --- !u!1 &2284220096096563108
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,13 +606,13 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _playerNickNameTM: {fileID: 7319436505145594861}
   _playerModel: {fileID: 8054853945983303956}
+  _localCameraHandler: {fileID: 246120406805321715}
+  _localUI: {fileID: 6847442062705736821}
   _nickName:
     _length: 0
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _token: 0
-  _localCameraHandler: {fileID: 246120406805321715}
-  _localUI: {fileID: 6847442062705736821}
 --- !u!114 &2188957561650592609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -756,14 +755,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _isDead: 0
-  uiOnHitColor: {r: 0.9056604, g: 0.37080812, b: 0.37080812, a: 0.41960785}
-  uiOnHitImage: {fileID: 3971609654798122313}
-  bodyMeshRenderer: {fileID: 5378213703285569550}
-  playerModel: {fileID: 6860565821398973337}
-  deathGameObjectPrefab: {fileID: 4065765930418240059, guid: 6f924c823f1806b43a273c5c2cdbceb4, type: 3}
-  textHP: {fileID: 7467776304614463802}
-  skipSettingStartValues: 0
+  _IsDead: 0
+  _uiOnHitColor: {r: 0.9056604, g: 0.37080812, b: 0.37080812, a: 0.41960785}
+  _uiOnHitImage: {fileID: 3971609654798122313}
+  _bodyMeshRenderer: {fileID: 5378213703285569550}
+  _playerModel: {fileID: 6860565821398973337}
+  _deathGameObjectPrefab: {fileID: 4065765930418240059, guid: 6f924c823f1806b43a273c5c2cdbceb4, type: 3}
+  _textHP: {fileID: 7467776304614463802}
+  _skipSettingStartValues: 0
 --- !u!114 &4985779429485557398
 MonoBehaviour:
   m_ObjectHideFlags: 0
