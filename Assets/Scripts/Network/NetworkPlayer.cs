@@ -1,37 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using TMPro;
+using UnityEngine.Serialization;
 
 public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 {
-    public TextMeshProUGUI playerNickNameTM;
     public static NetworkPlayer Local { get; set;}
-    public Transform playerModel;
-
+    [SerializeField] private TextMeshProUGUI _playerNickNameTM;
+    [SerializeField] private Transform _playerModel;
+    [SerializeField] private LocalCameraHandler _localCameraHandler;
+    [SerializeField] private GameObject _localUI;
+    
     [Networked(OnChanged = nameof(OnNickNameChanged))]
     public NetworkString<_16> nickName { get; set;}
-
     [Networked] public int token { get; set;}
     
-    bool isPublicJoinMessageSent = false;
-
-    public LocalCameraHandler localCameraHandler;
-    public GameObject localUI;
-
+    private bool _isPublicJoinMessageSent = false;
     //Other components
-    NetworkInGameMessages networkInGameMessages;
+    private NetworkInGameMessages _networkInGameMessages;
+    
+    public LocalCameraHandler LocalCameraHandler { get; set;}
 
     void Awake()
     {
-        networkInGameMessages = GetComponent<NetworkInGameMessages>();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
+        _networkInGameMessages = GetComponent<NetworkInGameMessages>();
     }
 
     public override void Spawned()
@@ -41,7 +33,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             Local = this;
 
             //Sets the layer of the local players model
-            Utils.SetRenderLayerInChildren(playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
+            Utils.SetRenderLayerInChildren(_playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
 
             //Disable main camera
             if (Camera.main != null)
@@ -53,13 +45,13 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
 
             //Enable the local camera
-            localCameraHandler.localCamera.enabled = true;
+            _localCameraHandler.localCamera.enabled = true;
 
             //Detach camera if enabled
-            localCameraHandler.transform.parent = null;
+            _localCameraHandler.transform.parent = null;
 
             //Enable UI for local player
-            localUI.SetActive(true);
+            _localUI.SetActive(true);
 
             RPC_SetNickName(GameManager.instance.playerNickName);
 
@@ -68,10 +60,10 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         else
         {
             //Disable the local camera for remote players
-            localCameraHandler.localCamera.enabled = false;
+            _localCameraHandler.localCamera.enabled = false;
 
             //Disable UI for remote player
-            localUI.SetActive(false);
+            _localUI.SetActive(false);
 
             //Only 1 audio listner is allowed in the scene so disable remote players audio listner
             AudioListener audioListener = GetComponentInChildren<AudioListener>();
@@ -115,7 +107,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     {
         Debug.Log($"Nickname changed for player to {nickName} for player {gameObject.name}");
 
-        playerNickNameTM.text = nickName.ToString();
+        _playerNickNameTM.text = nickName.ToString();
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
@@ -124,18 +116,18 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         Debug.Log($"[RPC] SetNickName {nickName}");
         this.nickName = nickName;
 
-        if(!isPublicJoinMessageSent)
+        if(!_isPublicJoinMessageSent)
         {
-            networkInGameMessages.SendInGameRPCMessage(nickName, "joined");
+            _networkInGameMessages.SendInGameRPCMessage(nickName, "joined");
 
-            isPublicJoinMessageSent = true;
+            _isPublicJoinMessageSent = true;
         }
     }
     
     void OnDestroy()
     {
         //Get rid of the local camera if we get destroyed as a new one will be spawned with the new Network player
-        if (localCameraHandler != null)
-            Destroy(localCameraHandler.gameObject);
+        if (_localCameraHandler != null)
+            Destroy(_localCameraHandler.gameObject);
     }
 }

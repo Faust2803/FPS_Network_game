@@ -25,7 +25,7 @@ public class NetworkInGameMessages : NetworkBehaviour
         Debug.Log($"[RPC] InGameMessage {message}");
 
         if (inGameMessagesUIHander == null)
-            inGameMessagesUIHander = NetworkPlayer.Local.localCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
+            inGameMessagesUIHander = NetworkPlayer.Local.LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
 
         if (inGameMessagesUIHander != null)
             inGameMessagesUIHander.OnGameMessageReceived(message);
