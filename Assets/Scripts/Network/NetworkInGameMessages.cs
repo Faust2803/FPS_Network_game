@@ -3,7 +3,7 @@ using Fusion;
 
 public class NetworkInGameMessages : NetworkBehaviour
 {
-    InGameMessagesUIHander inGameMessagesUIHander;
+     private InGameMessagesUIHander _inGameMessagesUIHander;
     
     public void SendInGameRPCMessage(string userNickName, string message)
     {
@@ -15,10 +15,10 @@ public class NetworkInGameMessages : NetworkBehaviour
     {
         Debug.Log($"[RPC] InGameMessage {message}");
 
-        if (inGameMessagesUIHander == null)
-            inGameMessagesUIHander = NetworkPlayer.Local.LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
+        if (_inGameMessagesUIHander == null)
+            _inGameMessagesUIHander = NetworkPlayer.Local.LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
 
-        if (inGameMessagesUIHander != null)
-            inGameMessagesUIHander.OnGameMessageReceived(message);
+        if (_inGameMessagesUIHander != null)
+            _inGameMessagesUIHander.OnGameMessageReceived(message);
     }
 }
