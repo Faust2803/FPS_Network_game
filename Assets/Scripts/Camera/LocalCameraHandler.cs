@@ -2,33 +2,34 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LocalCameraHandler : MonoBehaviour
 {
-    public Transform cameraAnchorPoint;
-
+    [SerializeField] private Transform cameraAnchorPoint;
+    public Camera LocalCamera {  get; private set;}
     //Input
-    Vector2 viewInput;
+    private Vector2 _viewInput;
 
     //Rotation
-    float cameraRotationX = 0;
-    float cameraRotationY = 0;
+    private float _cameraRotationX = 0;
+    private float _cameraRotationY = 0;
 
     //Other components
-    NetworkCharacterControllerPrototypeCustom networkCharacterControllerPrototypeCustom;
-    public Camera localCamera;
+    private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
+   
 
     private void Awake()
     {
-        localCamera = GetComponent<Camera>();
-        networkCharacterControllerPrototypeCustom = GetComponentInParent<NetworkCharacterControllerPrototypeCustom>();
+        LocalCamera = GetComponent<Camera>();
+        _networkCharacterControllerPrototypeCustom = GetComponentInParent<NetworkCharacterControllerPrototypeCustom>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        cameraRotationX = GameManager.instance.cameraViewRotation.x;
-        cameraRotationY = GameManager.instance.cameraViewRotation.y;
+        _cameraRotationX = GameManager.instance.cameraViewRotation.x;
+        _cameraRotationY = GameManager.instance.cameraViewRotation.y;
     }
 
     void LateUpdate()
@@ -36,33 +37,33 @@ public class LocalCameraHandler : MonoBehaviour
         if (cameraAnchorPoint == null)
             return;
 
-        if (!localCamera.enabled)
+        if (!LocalCamera.enabled)
             return;
 
         //Move the camera to the position of the player
-        localCamera.transform.position = cameraAnchorPoint.position;
+        LocalCamera.transform.position = cameraAnchorPoint.position;
 
         //Calculate rotation
-        cameraRotationX += viewInput.y * Time.deltaTime * networkCharacterControllerPrototypeCustom.viewUpDownRotationSpeed;
-        cameraRotationX = Mathf.Clamp(cameraRotationX, -90, 90);
+        _cameraRotationX += _viewInput.y * Time.deltaTime * _networkCharacterControllerPrototypeCustom.viewUpDownRotationSpeed;
+        _cameraRotationX = Mathf.Clamp(_cameraRotationX, -90, 90);
 
-        cameraRotationY += viewInput.x * Time.deltaTime * networkCharacterControllerPrototypeCustom.rotationSpeed;
+        _cameraRotationY += _viewInput.x * Time.deltaTime * _networkCharacterControllerPrototypeCustom.rotationSpeed;
 
         //Apply rotation
-        localCamera.transform.rotation = Quaternion.Euler(cameraRotationX, cameraRotationY, 0);
+        LocalCamera.transform.rotation = Quaternion.Euler(_cameraRotationX, _cameraRotationY, 0);
 
     }
     public void SetViewInputVector(Vector2 viewInput)
     {
-        this.viewInput = viewInput;
+        this._viewInput = viewInput;
     }
 
     private void OnDestroy()
     {
-        if (cameraRotationX != 0 && cameraRotationY != 0)
+        if (_cameraRotationX != 0 && _cameraRotationY != 0)
         {
-            GameManager.instance.cameraViewRotation.x = cameraRotationX;
-            GameManager.instance.cameraViewRotation.y = cameraRotationY;
+            GameManager.instance.cameraViewRotation.x = _cameraRotationX;
+            GameManager.instance.cameraViewRotation.y = _cameraRotationY;
         }
     }
 }

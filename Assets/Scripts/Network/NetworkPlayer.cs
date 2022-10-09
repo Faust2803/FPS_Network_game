@@ -45,7 +45,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
 
             //Enable the local camera
-            _localCameraHandler.localCamera.enabled = true;
+            _localCameraHandler.LocalCamera.enabled = true;
 
             //Detach camera if enabled
             _localCameraHandler.transform.parent = null;
@@ -60,7 +60,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         else
         {
             //Disable the local camera for remote players
-            _localCameraHandler.localCamera.enabled = false;
+            _localCameraHandler.LocalCamera.enabled = false;
 
             //Disable UI for remote player
             _localUI.SetActive(false);
