@@ -1,43 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 
 public class CharacterMovementHandler : NetworkBehaviour
 {
-    bool isRespawnRequested = false;
+    private bool _isRespawnRequested = false;
 
     //Other components
-    NetworkCharacterControllerPrototypeCustom networkCharacterControllerPrototypeCustom;
-    HPHandler hpHandler;
-    NetworkInGameMessages networkInGameMessages;
-    NetworkPlayer networkPlayer;
+    private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
+    private HPHandler _hpHandler;
+    private NetworkInGameMessages _networkInGameMessages;
+    private NetworkPlayer _networkPlayer;
 
     private void Awake()
     {
-        networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
-        hpHandler = GetComponent<HPHandler>();
-        networkInGameMessages = GetComponent<NetworkInGameMessages>();
-        networkPlayer = GetComponent<NetworkPlayer>();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
+        _hpHandler = GetComponent<HPHandler>();
+        _networkInGameMessages = GetComponent<NetworkInGameMessages>();
+        _networkPlayer = GetComponent<NetworkPlayer>();
     }
 
     public override void FixedUpdateNetwork()
     {
         if (Object.HasStateAuthority)
         {
-            if (isRespawnRequested)
+            if (_isRespawnRequested)
             {
                 Respawn();
                 return;
             }
 
             //Don't update the clients position when they are dead
-            if (hpHandler.IsDead)
+            if (_hpHandler.IsDead)
                 return;
         }
 
@@ -56,11 +49,11 @@ public class CharacterMovementHandler : NetworkBehaviour
             Vector3 moveDirection = transform.forward * networkInputData.movementInput.y + transform.right * networkInputData.movementInput.x;
             moveDirection.Normalize();
 
-            networkCharacterControllerPrototypeCustom.Move(moveDirection);
+            _networkCharacterControllerPrototypeCustom.Move(moveDirection);
 
             //Jump
             if(networkInputData.isJumpPressed)
-                networkCharacterControllerPrototypeCustom.Jump();
+                _networkCharacterControllerPrototypeCustom.Jump();
 
             //Check if we've fallen off the world.
             CheckFallRespawn();
@@ -76,7 +69,7 @@ public class CharacterMovementHandler : NetworkBehaviour
             {
                 Debug.Log($"{Time.time} Respawn due to fall outside of map at position {transform.position}");
 
-                networkInGameMessages.SendInGameRPCMessage(networkPlayer.nickName.ToString(), "fell off the world");
+                _networkInGameMessages.SendInGameRPCMessage(_networkPlayer.nickName.ToString(), "fell off the world");
 
                 Respawn();
             }
@@ -86,21 +79,21 @@ public class CharacterMovementHandler : NetworkBehaviour
 
     public void RequestRespawn()
     {
-        isRespawnRequested = true;
+        _isRespawnRequested = true;
     }
 
     void Respawn()
     {
-        networkCharacterControllerPrototypeCustom.TeleportToPosition(Utils.GetRandomSpawnPoint());
+        _networkCharacterControllerPrototypeCustom.TeleportToPosition(Utils.GetRandomSpawnPoint());
 
-        hpHandler.OnRespawned();
+        _hpHandler.OnRespawned();
 
-        isRespawnRequested = false;
+        _isRespawnRequested = false;
     }
 
     public void SetCharacterControllerEnabled(bool isEnabled)
     {
-        networkCharacterControllerPrototypeCustom.Controller.enabled = isEnabled;
+        _networkCharacterControllerPrototypeCustom.Controller.enabled = isEnabled;
     }
 
 }

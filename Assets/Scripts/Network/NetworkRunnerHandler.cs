@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
@@ -8,30 +7,29 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 
-
 public class NetworkRunnerHandler : MonoBehaviour
 {
-    public NetworkRunner networkRunnerPrefab;
+    [SerializeField] private NetworkRunner _networkRunnerPrefab;
 
-    NetworkRunner networkRunner;
+    private NetworkRunner _networkRunner;
 
     // Start is called before the first frame update
     void Start()
     {
-        networkRunner = Instantiate(networkRunnerPrefab);
-        networkRunner.name = "Network runner";
+        _networkRunner = Instantiate(_networkRunnerPrefab);
+        _networkRunner.name = "Network runner";
 
-        var clientTask = InitializeNetworkRunner(networkRunner, GameMode.AutoHostOrClient, GameManager.instance.GetConnectionToken(), NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
+        var clientTask = InitializeNetworkRunner(_networkRunner, GameMode.AutoHostOrClient, GameManager.instance.GetConnectionToken(), NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
 
         Debug.Log($"Server NetworkRunner started.");
     }
 
     public void StartHostMigration(HostMigrationToken hostMigrationToken)
     {
-        networkRunner = Instantiate(networkRunnerPrefab);
-        networkRunner.name = "Network runner- Migrated";
+        _networkRunner = Instantiate(_networkRunnerPrefab);
+        _networkRunner.name = "Network runner- Migrated";
 
-        var clientTask = InitializeNetworkRunnerHostMigration(networkRunner, hostMigrationToken);
+        var clientTask = InitializeNetworkRunnerHostMigration(_networkRunner, hostMigrationToken);
 
         Debug.Log($"Host Migration started");
     }
