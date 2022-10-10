@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class CharacterInputHandler : MonoBehaviour
 {
-    Vector2 moveInputVector = Vector2.zero;
-    Vector2 viewInputVector = Vector2.zero;
-    bool isJumpButtonPressed = false;
-    bool isFireButtonPressed = false;
-    bool isGrenadeFireButtonPressed = false;
-    bool isRockedFireButtonPressed = false;
+    private Vector2 _moveInputVector = Vector2.zero;
+    private Vector2 _viewInputVector = Vector2.zero;
+    private bool _isJumpButtonPressed = false;
+    private bool _isFireButtonPressed = false;
+    private bool _isGrenadeFireButtonPressed = false;
+    private bool _isRockedFireButtonPressed = false;
 
     //Other components
-    LocalCameraHandler localCameraHandler;
-    CharacterMovementHandler characterMovementHandler;
+    private LocalCameraHandler _localCameraHandler;
+    private CharacterMovementHandler _characterMovementHandler;
 
     private void Awake()
     {
-        localCameraHandler = GetComponentInChildren<LocalCameraHandler>();
-        characterMovementHandler = GetComponent<CharacterMovementHandler>();
+        _localCameraHandler = GetComponentInChildren<LocalCameraHandler>();
+        _characterMovementHandler = GetComponent<CharacterMovementHandler>();
     }
 
     // Start is called before the first frame update
@@ -31,32 +31,32 @@ public class CharacterInputHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!characterMovementHandler.Object.HasInputAuthority)
+        if (!_characterMovementHandler.Object.HasInputAuthority)
             return;
 
         //View input
-        viewInputVector.x = Input.GetAxis("Mouse X");
-        viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+        _viewInputVector.x = Input.GetAxis("Mouse X");
+        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
 
         //Move input
-        moveInputVector.x = Input.GetAxis("Horizontal");
-        moveInputVector.y = Input.GetAxis("Vertical");
+        _moveInputVector.x = Input.GetAxis("Horizontal");
+        _moveInputVector.y = Input.GetAxis("Vertical");
 
         //Jump
         if (Input.GetKeyDown(KeyCode.Space))
-            isJumpButtonPressed = true;
+            _isJumpButtonPressed = true;
 
         //Fire
         if (Input.GetMouseButtonDown(0))
-            isFireButtonPressed = true;
+            _isFireButtonPressed = true;
         if (Input.GetMouseButtonDown(1))
-            isRockedFireButtonPressed = true;
+            _isRockedFireButtonPressed = true;
 
         if (Input.GetKeyDown(KeyCode.G))
-            isGrenadeFireButtonPressed = true;
+            _isGrenadeFireButtonPressed = true;
 
         //Set view
-        localCameraHandler.SetViewInputVector(viewInputVector);
+        _localCameraHandler.SetViewInputVector(_viewInputVector);
 
     }
 
@@ -65,24 +65,24 @@ public class CharacterInputHandler : MonoBehaviour
         NetworkInputData networkInputData = new NetworkInputData();
 
         //Aim data
-        networkInputData.aimForwardVector = localCameraHandler.transform.forward;
+        networkInputData.aimForwardVector = _localCameraHandler.transform.forward;
 
         //Move data
-        networkInputData.movementInput = moveInputVector;
+        networkInputData.movementInput = _moveInputVector;
 
         //Jump data
-        networkInputData.isJumpPressed = isJumpButtonPressed;
+        networkInputData.isJumpPressed = _isJumpButtonPressed;
 
         //Fire data
-        networkInputData.isFireButtonPressed = isFireButtonPressed;
-        networkInputData.isGrenadeFireButtonPressed = isGrenadeFireButtonPressed;
-        networkInputData.isRocketFireButtonPressed = isRockedFireButtonPressed;
+        networkInputData.isFireButtonPressed = _isFireButtonPressed;
+        networkInputData.isGrenadeFireButtonPressed = _isGrenadeFireButtonPressed;
+        networkInputData.isRocketFireButtonPressed = _isRockedFireButtonPressed;
 
         //Reset variables now that we have read their states
-        isJumpButtonPressed = false;
-        isFireButtonPressed = false;
-        isGrenadeFireButtonPressed = false;
-        isRockedFireButtonPressed = false;
+        _isJumpButtonPressed = false;
+        _isFireButtonPressed = false;
+        _isGrenadeFireButtonPressed = false;
+        _isRockedFireButtonPressed = false;
         return networkInputData;
     }
 }
