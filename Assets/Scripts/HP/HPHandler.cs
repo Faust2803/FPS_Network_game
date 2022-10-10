@@ -20,6 +20,8 @@ public class HPHandler : NetworkBehaviour
     [SerializeField] private GameObject _deathGameObjectPrefab;
     [SerializeField] private TextMeshProUGUI _textHP;
     [SerializeField] private bool _skipSettingStartValues = false;
+    [SerializeField] private TextMeshProUGUI _textHPEnemy;
+    [SerializeField] private Slider _HPEnemy;
 
     public bool SkipSettingStartValues
     {
@@ -49,10 +51,11 @@ public class HPHandler : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _HPEnemy.maxValue = STARTING_HP;
         if (!_skipSettingStartValues)
         {
             HP = STARTING_HP;
-            _textHP.text = "HP "+HP;
+            SetHp(HP.ToString());
             IsDead = false;
         }
 
@@ -71,7 +74,7 @@ public class HPHandler : NetworkBehaviour
         yield return new WaitForSeconds(0.2f);
 
         _bodyMeshRenderer.material.color = _defaultMeshBodyColor;
-        _textHP.text = "HP "+HP;
+        SetHp(HP.ToString());
         if (Object.HasInputAuthority && !IsDead)
             _uiOnHitImage.color = new Color(0, 0, 0, 0);
     }
@@ -181,7 +184,14 @@ public class HPHandler : NetworkBehaviour
     {
         //Reset variables
         HP = STARTING_HP;
-        _textHP.text = "HP "+HP;
+        SetHp(HP.ToString());
         IsDead = false;
+    }
+
+    private void SetHp(string hp)
+    {
+        _textHP.text = "HP "+hp;
+        _textHPEnemy.text = hp;
+        _HPEnemy.value = HP;
     }
 }
