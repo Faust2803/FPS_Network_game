@@ -20,12 +20,12 @@ public class RocketHandler : NetworkBehaviour
     private List<LagCompensatedHit> _hits = new List<LagCompensatedHit>();
     
     private PlayerRef _fireByPlayerRef;
-    private NetworkPlayer _fireByPlayer;
+    private string _fireByPlayer;
     private NetworkObject _fireBynetworkObject;
     
     private NetworkObject _networkObject;
     
-    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject,  NetworkPlayer fireByPlayer)
+    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject,  string fireByPlayer)
     {
         
         _fireByPlayerRef = fireByPlayerRef;

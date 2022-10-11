@@ -54,13 +54,13 @@ public class HPHandler : NetworkBehaviour
         if (!_skipSettingStartValues)
         {
             HP = STARTING_HP;
-            SetHp(HP.ToString());
             IsDead = false;
         }
 
         _defaultMeshBodyColor = _bodyMeshRenderer.material.color;
 
         _isInitialized = true;
+        SetHp();
     }
 
     IEnumerator OnHitCO()
@@ -69,13 +69,15 @@ public class HPHandler : NetworkBehaviour
 
         if (Object.HasInputAuthority)
             _uiOnHitImage.color = _uiOnHitColor;
-
+        SetHp();
         yield return new WaitForSeconds(0.2f);
 
         _bodyMeshRenderer.material.color = _defaultMeshBodyColor;
-        SetHp(HP.ToString());
+        
         if (Object.HasInputAuthority && !IsDead)
+        {
             _uiOnHitImage.color = new Color(0, 0, 0, 0);
+        }
     }
 
     IEnumerator ServerReviveCO()
@@ -87,7 +89,7 @@ public class HPHandler : NetworkBehaviour
 
 
     //Function only called on the server
-    public void OnTakeDamage(NetworkPlayer damageCausedByPlayer, byte damage = 1)
+    public void OnTakeDamage(string damageCausedByPlayer, byte damage = 1)
     {
         //Only take damage while alive
         if (IsDead)
@@ -104,7 +106,7 @@ public class HPHandler : NetworkBehaviour
         //Player died
         if (HP == 0)
         {
-            _networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayer.nickName.ToString(), $"Killed <b>{_networkPlayer.nickName.ToString()}</b>");
+            _networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayer, $"Killed <b>{_networkPlayer.nickName.ToString()}</b>");
 
             Debug.Log($"{Time.time} {transform.name} died");
 
@@ -114,10 +116,10 @@ public class HPHandler : NetworkBehaviour
             
             _networkPlayer.Dead++;
 
-            if (damageCausedByPlayer != _networkPlayer)
-            {
-                damageCausedByPlayer.Kill++;  
-            }
+            // if (damageCausedByPlayer != _networkPlayer)
+            // {
+            //     damageCausedByPlayer.Kill++;  
+            // }
         }
     }
 
@@ -125,15 +127,15 @@ public class HPHandler : NetworkBehaviour
     {
         Debug.Log($"{Time.time} OnHPChanged value {changed.Behaviour.HP}");
 
-        byte newHP = changed.Behaviour.HP;
-
-        //Load the old value
-        changed.LoadOld();
-
-        byte oldHP = changed.Behaviour.HP;
-
-        //Check if the HP has been decreased
-        if (newHP < oldHP)
+        // byte newHP = changed.Behaviour.HP;
+        //
+        // //Load the old value
+        // changed.LoadOld();
+        //
+        // byte oldHP = changed.Behaviour.HP;
+        //
+        // //Check if the HP has been decreased
+        // if (newHP < oldHP)
             changed.Behaviour.OnHPReduced();
     }
 
@@ -190,14 +192,23 @@ public class HPHandler : NetworkBehaviour
     {
         //Reset variables
         HP = STARTING_HP;
-        SetHp(HP.ToString());
+
+        StartCoroutine(SetHPKO());
         IsDead = false;
     }
-
-    private void SetHp(string hp)
+    
+    private IEnumerator SetHPKO()
     {
-        _textHP.text = "HP "+hp;
-        _textHPEnemy.text = hp;
-        _HPEnemy.value = HP;
+        yield return new WaitForSeconds(.5f);
+        SetHp();
+    }
+
+    private void SetHp()
+    {
+         _textHP.text = "HP "+HP;
+         _textHPEnemy.text = HP.ToString();
+         _HPEnemy.value = HP;
+        
+        Debug.Log($"!!!!!" +HP);
     }
 }

@@ -16,7 +16,11 @@ public class Nickname : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        transform.LookAt(_mainCamera);
-        transform.rotation = _mainCamera.rotation;
+        if (transform != null && _mainCamera != null)
+        {
+            transform.LookAt(_mainCamera);
+            transform.rotation = _mainCamera.rotation;
+        }
+       
     }
 }

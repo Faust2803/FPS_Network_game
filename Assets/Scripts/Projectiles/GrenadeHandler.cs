@@ -17,7 +17,7 @@ public class GrenadeHandler : NetworkBehaviour
    [SerializeField] private LayerMask _collisionLayers;
    
    private PlayerRef _throwByPlayerRef;
-   private NetworkPlayer _throwByPlayer;
+   private string _throwByPlayer;
    
    private TickTimer _explodeTickTimer = TickTimer.None;
 
@@ -26,7 +26,7 @@ public class GrenadeHandler : NetworkBehaviour
    private NetworkObject _networkObject;
    private NetworkRigidbody _networkRigidbody;
    
-   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, NetworkPlayer throwByPlayer)
+   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, string throwByPlayer)
    {
       _networkObject = GetComponent<NetworkObject>();
       _networkRigidbody = GetComponent<NetworkRigidbody>();

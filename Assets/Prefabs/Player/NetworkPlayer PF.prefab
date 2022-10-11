@@ -387,7 +387,6 @@ GameObject:
   - component: {fileID: 7916855431189846549}
   - component: {fileID: 3231566131802294075}
   - component: {fileID: 7319436505145594861}
-  - component: {fileID: 8240617190567438245}
   m_Layer: 5
   m_Name: PlayerNicknameText (TMP)
   m_TagString: Untagged
@@ -512,18 +511,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &8240617190567438245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1661600681764432428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8887b4acb6b3ee459c278d52ae61677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2068390590835243674
 GameObject:
   m_ObjectHideFlags: 0
@@ -983,14 +970,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  grenadeHandler: {fileID: 2741798293244832664, guid: 7fdd14a7d1ddac24cadcb3e17bd70847, type: 3}
-  rockedHandler: {fileID: 6322058131185746624, guid: a48267a0b9fc2904f92ae552b97ead6f, type: 3}
-  fireParticleSystem: {fileID: 3841490051404919012}
-  aimPoint: {fileID: 8609938973519135566}
-  collisionLayers:
+  _grenadeHandler: {fileID: 2741798293244832664, guid: 7fdd14a7d1ddac24cadcb3e17bd70847, type: 3}
+  _rockedHandler: {fileID: 6322058131185746624, guid: a48267a0b9fc2904f92ae552b97ead6f, type: 3}
+  _fireParticleSystem: {fileID: 7991067798791467063, guid: 5ca433eb0cb7b204ea29e6a8c772ae1d, type: 3}
+  _aimPoint: {fileID: 6030425788976644678}
+  _collisionLayers:
     serializedVersion: 2
     m_Bits: 129
-  _isFiring: 0
+  _IsFiring: 0
 --- !u!114 &1852728354347325528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1272,6 +1259,7 @@ GameObject:
   - component: {fileID: 7080237114754900239}
   - component: {fileID: 7400630355046553454}
   - component: {fileID: 8125841955926021626}
+  - component: {fileID: 92719995552338998}
   m_Layer: 5
   m_Name: WorldSpaceCanvas
   m_TagString: Untagged
@@ -1362,6 +1350,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &92719995552338998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6853638350434768326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8887b4acb6b3ee459c278d52ae61677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6860565821398973337
 GameObject:
   m_ObjectHideFlags: 0
@@ -2175,8 +2175,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 362219081622703843, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
   m_PrefabInstance: {fileID: 3297402771153202953}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &3841490051404919012 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 1769083976109416429, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
+--- !u!4 &6030425788976644678 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9111584777231101263, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
   m_PrefabInstance: {fileID: 3297402771153202953}
   m_PrefabAsset: {fileID: 0}
