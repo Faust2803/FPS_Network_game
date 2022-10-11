@@ -1039,6 +1039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _inGameMessagesUIHander: {fileID: 3604816044077548597}
 --- !u!1 &5606148354848011034
 GameObject:
   m_ObjectHideFlags: 0
@@ -1882,6 +1883,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a3e7fc0afb14d44bae17e75a08145a0, type: 3}
+--- !u!114 &3604816044077548597 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1695824223703380893, guid: 9a3e7fc0afb14d44bae17e75a08145a0, type: 3}
+  m_PrefabInstance: {fileID: 2706142423570495400}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d65e51518198f1348bd8e84bc12630c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3971609654798122313 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1338655140668263137, guid: 9a3e7fc0afb14d44bae17e75a08145a0, type: 3}

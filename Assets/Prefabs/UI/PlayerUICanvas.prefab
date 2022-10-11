@@ -949,10 +949,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65e51518198f1348bd8e84bc12630c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textMeshProUGUIs:
-  - {fileID: 253007883148839820}
-  - {fileID: 1502161947910526692}
+  _textMeshProUGUIs:
   - {fileID: 1239215468850355334}
+  - {fileID: 1502161947910526692}
+  - {fileID: 253007883148839820}
 --- !u!1 &8829630826697984989
 GameObject:
   m_ObjectHideFlags: 0

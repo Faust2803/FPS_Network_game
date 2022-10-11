@@ -19637,7 +19637,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d866dbeeac5a49149ad2a604a12cd24e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particles:
+  _particles:
   - {fileID: 7609908644617488876}
   - {fileID: 1246179387030298985}
   - {fileID: 7923447563890282695}
