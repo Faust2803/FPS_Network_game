@@ -89,6 +89,11 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         //Set the Player as a player object
         Runner.SetPlayerObject(Object.InputAuthority, Object);
 
+        Kill = 0;
+        Dead = 0;
+        OnKillIncreased(Kill.ToString());
+        OnDeadIncreased(Dead.ToString());
+        
         //Make it easier to tell which player is which.
         transform.name = $"P_{Object.Id}";
     }
@@ -140,42 +145,20 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     
     static void OnKillChanged(Changed<NetworkPlayer> changed)
     {
-        Debug.Log($"{Time.time} OnKillChanged value {changed.Behaviour.Kill}");
-
-        byte newKill = changed.Behaviour.Kill;
-
-        //Load the old value
-        changed.LoadOld();
-
-        byte oldKill = changed.Behaviour.Kill;
-
-        //Check if the Kill has been increased
-        if (newKill > oldKill)
-            changed.Behaviour.OnKillIncreased();
+        changed.Behaviour.OnKillIncreased(changed.Behaviour.Kill.ToString());
     }
         
-    private void OnKillIncreased()
+    private void OnKillIncreased(string kill)
     {
-        _textKill.text = Kill.ToString();
+        _textKill.text = kill;
     }
         
     static void OnDeadChanged(Changed<NetworkPlayer> changed)
     {
-        Debug.Log($"{Time.time} OnoldDeadChanged value {changed.Behaviour.Dead}");
-
-        byte newDead = changed.Behaviour.Dead;
-
-        //Load the old value
-        changed.LoadOld();
-
-        byte oldDead = changed.Behaviour.Dead;
-
-        //Check if the Dead has been increased
-        if (newDead > oldDead)
-            changed.Behaviour.OnDeadIncreased();
+        changed.Behaviour.OnDeadIncreased(changed.Behaviour.Dead.ToString());
     }
         
-    private void OnDeadIncreased()
+    private void OnDeadIncreased(string dead)
     {
         _texDead.text = Dead.ToString();
     }

@@ -111,8 +111,13 @@ public class HPHandler : NetworkBehaviour
             StartCoroutine(ServerReviveCO());
 
             IsDead = true;
+            
             _networkPlayer.Dead++;
-            damageCausedByPlayer.Kill++;
+
+            if (damageCausedByPlayer != _networkPlayer)
+            {
+                damageCausedByPlayer.Kill++;  
+            }
         }
     }
 
