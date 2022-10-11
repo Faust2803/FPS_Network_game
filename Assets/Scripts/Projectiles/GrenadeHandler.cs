@@ -17,7 +17,7 @@ public class GrenadeHandler : NetworkBehaviour
    [SerializeField] private LayerMask _collisionLayers;
    
    private PlayerRef _throwByPlayerRef;
-   private string _throwByPlayerName;
+   private NetworkPlayer _throwByPlayer;
    
    private TickTimer _explodeTickTimer = TickTimer.None;
 
@@ -26,7 +26,7 @@ public class GrenadeHandler : NetworkBehaviour
    private NetworkObject _networkObject;
    private NetworkRigidbody _networkRigidbody;
    
-   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, string throwByPlayerName)
+   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, NetworkPlayer throwByPlayer)
    {
       _networkObject = GetComponent<NetworkObject>();
       _networkRigidbody = GetComponent<NetworkRigidbody>();
@@ -34,7 +34,7 @@ public class GrenadeHandler : NetworkBehaviour
       _networkRigidbody.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
 
       _throwByPlayerRef = throwByPlayerRef;
-      _throwByPlayerName = throwByPlayerName;
+      _throwByPlayer = throwByPlayer;
 
       _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
       
@@ -60,7 +60,7 @@ public class GrenadeHandler : NetworkBehaviour
 
                if (hpHandler != null)
                {
-                  hpHandler.OnTakeDamage(_throwByPlayerName, 3);
+                  hpHandler.OnTakeDamage(_throwByPlayer, 3);
                }
             }
             

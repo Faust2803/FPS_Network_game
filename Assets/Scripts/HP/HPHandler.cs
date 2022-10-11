@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using TMPro;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class HPHandler : NetworkBehaviour
@@ -22,6 +20,7 @@ public class HPHandler : NetworkBehaviour
     [SerializeField] private bool _skipSettingStartValues = false;
     [SerializeField] private TextMeshProUGUI _textHPEnemy;
     [SerializeField] private Slider _HPEnemy;
+   
 
     public bool SkipSettingStartValues
     {
@@ -88,7 +87,7 @@ public class HPHandler : NetworkBehaviour
 
 
     //Function only called on the server
-    public void OnTakeDamage(string damageCausedByPlayerNickname, byte damage = 1)
+    public void OnTakeDamage(NetworkPlayer damageCausedByPlayer, byte damage = 1)
     {
         //Only take damage while alive
         if (IsDead)
@@ -105,13 +104,15 @@ public class HPHandler : NetworkBehaviour
         //Player died
         if (HP == 0)
         {
-            _networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayerNickname, $"Killed <b>{_networkPlayer.nickName.ToString()}</b>");
+            _networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayer.nickName.ToString(), $"Killed <b>{_networkPlayer.nickName.ToString()}</b>");
 
             Debug.Log($"{Time.time} {transform.name} died");
 
             StartCoroutine(ServerReviveCO());
 
             IsDead = true;
+            _networkPlayer.Dead++;
+            damageCausedByPlayer.Kill++;
         }
     }
 

@@ -20,16 +20,16 @@ public class RocketHandler : NetworkBehaviour
     private List<LagCompensatedHit> _hits = new List<LagCompensatedHit>();
     
     private PlayerRef _fireByPlayerRef;
-    private string _fireByPlayerName;
+    private NetworkPlayer _fireByPlayer;
     private NetworkObject _fireBynetworkObject;
     
     private NetworkObject _networkObject;
     
-    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject,  string fireByPlayerName)
+    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject,  NetworkPlayer fireByPlayer)
     {
         
         _fireByPlayerRef = fireByPlayerRef;
-        _fireByPlayerName = fireByPlayerName;
+        _fireByPlayer = fireByPlayer;
         _fireBynetworkObject = fireBynetworkObject;
         _networkObject = GetComponent<NetworkObject>();
         _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
@@ -87,7 +87,7 @@ public class RocketHandler : NetworkBehaviour
 
                     if (hpHandler != null)
                     {
-                        hpHandler.OnTakeDamage(_fireByPlayerName, 5);
+                        hpHandler.OnTakeDamage(_fireByPlayer, 5);
                     }
                 } 
                 

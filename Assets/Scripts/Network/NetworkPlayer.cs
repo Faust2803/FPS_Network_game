@@ -11,8 +11,22 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     [SerializeField] private LocalCameraHandler _localCameraHandler;
     [SerializeField] private GameObject _localUI;
     
+    [SerializeField] private TextMeshProUGUI _textKill;
+    [SerializeField] private TextMeshProUGUI _texDead;
+        
+    [SerializeField] private TextMeshProUGUI _textTime;
+    
     [Networked(OnChanged = nameof(OnNickNameChanged))]
     public NetworkString<_16> nickName { get; set;}
+    [Networked(OnChanged = nameof(OnKillChanged))]
+    public byte Kill { get; set; }
+    [Networked(OnChanged = nameof(OnDeadChanged))]
+    public byte Dead { get; set; }
+    [Networked(OnChanged = nameof(OnStateChanged))]
+    public bool IsEnd { get; set; }
+    [Networked(OnChanged = nameof(OnGameTimeChanged))]
+    private TickTimer GameTime { get; set; }
+    
     [Networked] public int token { get; set;}
     
     private bool _isPublicJoinMessageSent = false;
@@ -122,6 +136,92 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             _isPublicJoinMessageSent = true;
         }
+    }
+    
+    static void OnKillChanged(Changed<NetworkPlayer> changed)
+    {
+        Debug.Log($"{Time.time} OnKillChanged value {changed.Behaviour.Kill}");
+
+        byte newKill = changed.Behaviour.Kill;
+
+        //Load the old value
+        changed.LoadOld();
+
+        byte oldKill = changed.Behaviour.Kill;
+
+        //Check if the Kill has been increased
+        if (newKill > oldKill)
+            changed.Behaviour.OnKillIncreased();
+    }
+        
+    private void OnKillIncreased()
+    {
+        _textKill.text = Kill.ToString();
+    }
+        
+    static void OnDeadChanged(Changed<NetworkPlayer> changed)
+    {
+        Debug.Log($"{Time.time} OnoldDeadChanged value {changed.Behaviour.Dead}");
+
+        byte newDead = changed.Behaviour.Dead;
+
+        //Load the old value
+        changed.LoadOld();
+
+        byte oldDead = changed.Behaviour.Dead;
+
+        //Check if the Dead has been increased
+        if (newDead > oldDead)
+            changed.Behaviour.OnDeadIncreased();
+    }
+        
+    private void OnDeadIncreased()
+    {
+        _texDead.text = Dead.ToString();
+    }
+    
+    static void OnGameTimeChanged(Changed<NetworkPlayer> changed)
+    {
+        Debug.Log($"{Time.time} OnGameTimeChanged value {changed.Behaviour.GameTime}");
+
+        TickTimer newGameTime = changed.Behaviour.GameTime;
+
+        //Load the old value
+        changed.LoadOld();
+
+        TickTimer oldGameTime = changed.Behaviour.GameTime;
+
+        //Check if the GameTime has been decreased
+        if (newGameTime.TargetTick < oldGameTime.TargetTick)
+            changed.Behaviour.OnGameTimeReduced();
+    }
+        
+    private void OnGameTimeReduced()
+    {
+        _textTime.text = GameTime.RemainingTicks(Runner).ToString();
+        IsEnd = true;
+    }
+        
+    static void OnStateChanged(Changed<NetworkPlayer> changed)
+    {
+        Debug.Log($"{Time.time} OnStateChanged IsEnd");
+
+        bool isEndCurrent = changed.Behaviour.IsEnd;
+
+        //Load the old value
+        changed.LoadOld();
+
+        bool isEndOld = changed.Behaviour.IsEnd;
+
+            
+        if (isEndCurrent)
+            changed.Behaviour.OnEnd();
+            
+    }
+        
+    private void OnEnd()
+    {
+        Debug.Log($"{Time.time} OnEndTime");
     }
     
     void OnDestroy()
