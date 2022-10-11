@@ -161,8 +161,8 @@ public class WeaponHandler : NetworkBehaviour
 
         bool isFiringOld = changed.Behaviour.IsFiring;
 
-        //if (isFiringCurrent && !isFiringOld)
-            //changed.Behaviour.OnFireRemote();
+        if (isFiringCurrent && !isFiringOld)
+            changed.Behaviour.OnFireRemote();
 
     }
 

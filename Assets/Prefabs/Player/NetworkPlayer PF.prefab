@@ -972,8 +972,8 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _grenadeHandler: {fileID: 2741798293244832664, guid: 7fdd14a7d1ddac24cadcb3e17bd70847, type: 3}
   _rockedHandler: {fileID: 6322058131185746624, guid: a48267a0b9fc2904f92ae552b97ead6f, type: 3}
-  _fireParticleSystem: {fileID: 7991067798791467063, guid: 5ca433eb0cb7b204ea29e6a8c772ae1d, type: 3}
-  _aimPoint: {fileID: 6030425788976644678}
+  _fireParticleSystem: {fileID: 3841490051404919012}
+  _aimPoint: {fileID: 8609938973519135566}
   _collisionLayers:
     serializedVersion: 2
     m_Bits: 129
@@ -2175,8 +2175,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 362219081622703843, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
   m_PrefabInstance: {fileID: 3297402771153202953}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6030425788976644678 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9111584777231101263, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
+--- !u!198 &3841490051404919012 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1769083976109416429, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
   m_PrefabInstance: {fileID: 3297402771153202953}
   m_PrefabAsset: {fileID: 0}
