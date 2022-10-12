@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HPHandler : NetworkBehaviour
 {
-     private const byte STARTING_HP = 5;
+     public const byte STARTING_HP = 5;
      
     [Networked(OnChanged = nameof(OnStateChanged))]
     public bool IsDead { get; set; }
@@ -99,8 +99,7 @@ public class HPHandler : NetworkBehaviour
             damage = HP;
         
         HP -= damage;
-        
-        
+
         Debug.Log($"{Time.time} {transform.name} took damage got {HP} left ");
 
         //Player died
@@ -116,6 +115,8 @@ public class HPHandler : NetworkBehaviour
             
             _networkPlayer.Dead++;
 
+
+            
             if (networkPlayer != _networkPlayer)
             {
                 networkPlayer.Kill++;  
@@ -136,7 +137,7 @@ public class HPHandler : NetworkBehaviour
         //
         // //Check if the HP has been decreased
         // if (newHP < oldHP)
-            changed.Behaviour.OnHPReduced();
+        changed.Behaviour.OnHPReduced();
     }
 
     private void OnHPReduced()
@@ -192,15 +193,8 @@ public class HPHandler : NetworkBehaviour
     {
         //Reset variables
         HP = STARTING_HP;
-
-        StartCoroutine(SetHPKO());
-        IsDead = false;
-    }
-    
-    private IEnumerator SetHPKO()
-    {
-        yield return new WaitForSeconds(.5f);
         SetHp();
+        IsDead = false;
     }
 
     private void SetHp()
@@ -208,7 +202,5 @@ public class HPHandler : NetworkBehaviour
          _textHP.text = "HP "+HP;
          _textHPEnemy.text = HP.ToString();
          _HPEnemy.value = HP;
-        
-        Debug.Log($"!!!!!" +HP);
     }
 }

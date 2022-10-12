@@ -46,29 +46,29 @@ public class GrenadeHandler : NetworkBehaviour
       // if (Object.HasInputAuthority)
       // {
       if (_explodeTickTimer.Expired(Runner))
+      {
+         int hitCounter =
+            Runner.LagCompensation.OverlapSphere(transform.position,
+               10,
+               _throwByPlayerRef, 
+               _hits, 
+               _collisionLayers
+               );
+
+         for (var i = 0; i < hitCounter; i++)
          {
-            int hitCounter =
-               Runner.LagCompensation.OverlapSphere(transform.position,
-                  10,
-                  _throwByPlayerRef, 
-                  _hits, 
-                  _collisionLayers
-                  );
+            HPHandler hpHandler = _hits[i].Hitbox.transform.root.GetComponent<HPHandler>();
 
-            for (var i = 0; i < hitCounter; i++)
+            if (hpHandler != null)
             {
-               HPHandler hpHandler = _hits[i].Hitbox.transform.root.GetComponent<HPHandler>();
-
-               if (hpHandler != null)
-               {
-                  hpHandler.OnTakeDamage(_throwByPlayer, 3, _networkPlayer);
-               }
+               hpHandler.OnTakeDamage(_throwByPlayer, 3, _networkPlayer);
             }
-            
-            Runner.Despawn(_networkObject);
-            
-            _explodeTickTimer = TickTimer.None;
          }
+         
+         Runner.Despawn(_networkObject);
+         
+         _explodeTickTimer = TickTimer.None;
+      }
       //}
    }
 

@@ -41,8 +41,8 @@ public class RocketHandler : NetworkBehaviour
     {
         transform.position += transform.forward * Runner.DeltaTime * ROCKED_SPEED;
         
-        // if (Object.HasInputAuthority)
-        // {
+         //if (Object.HasInputAuthority)
+         {
             if (_explodeTickTimer.Expired(Runner))
             {
                 Runner.Despawn(_networkObject);
@@ -74,8 +74,8 @@ public class RocketHandler : NetworkBehaviour
                 }
             }
 
-             if (isValidHit)
-             {
+            if (isValidHit)
+            {
                 hitCounter = Runner.LagCompensation.OverlapSphere(_checkForImpactPoint.position,
                     5,
                     _fireByPlayerRef,
@@ -92,10 +92,15 @@ public class RocketHandler : NetworkBehaviour
                         hpHandler.OnTakeDamage(_fireByPlayer, 5, _networkPlayer);
                     }
                 } 
-                
+                Debug.LogWarning("!!!!!"+_networkPlayer.Id);
+               
                 Runner.Despawn(_networkObject);
+             
+                _explodeTickTimer = TickTimer.None;
             }
-        //}
+        }
+        
+        
     }
     
     public override void Despawned(NetworkRunner runner, bool hasState)

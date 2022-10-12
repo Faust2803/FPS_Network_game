@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Fusion;
 using TMPro;
@@ -5,34 +6,32 @@ using UnityEngine.Serialization;
 
 public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 {
+    private const int MATCH_TIME = 80;
     public static NetworkPlayer Local { get; set;}
     [SerializeField] private TextMeshProUGUI _playerNickNameTM;
     [SerializeField] private Transform _playerModel;
     [SerializeField] private LocalCameraHandler _localCameraHandler;
     [SerializeField] private GameObject _localUI;
-    
-    [SerializeField] private TextMeshProUGUI _textKill;
-    [SerializeField] private TextMeshProUGUI _texDead;
-        
-    [SerializeField] private TextMeshProUGUI _textTime;
-    
+
     [Networked(OnChanged = nameof(OnNickNameChanged))]
     public NetworkString<_16> nickName { get; set;}
+    
     [Networked(OnChanged = nameof(OnKillChanged))]
     public byte Kill { get; set; }
+    
     [Networked(OnChanged = nameof(OnDeadChanged))]
     public byte Dead { get; set; }
-    [Networked(OnChanged = nameof(OnStateChanged))]
-    public bool IsEnd { get; set; }
-    [Networked(OnChanged = nameof(OnGameTimeChanged))]
-    private TickTimer GameTime { get; set; }
     
+    [Networked(OnChanged = nameof(OnStateChanged))]
+    public bool IsEnd { get; private set; }
+
     [Networked] public int token { get; set;}
     
     private bool _isPublicJoinMessageSent = false;
     //Other components
     private NetworkInGameMessages _networkInGameMessages;
-    
+    private InGameMessagesUIHander _inGameMessagesUIHander;
+    private TickTimer _timer = TickTimer.None; 
     public LocalCameraHandler LocalCameraHandler {
     
         get => _localCameraHandler;
@@ -42,6 +41,20 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     void Awake()
     {
         _networkInGameMessages = GetComponent<NetworkInGameMessages>();
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        if (Object.HasInputAuthority && !IsEnd)
+        {
+            var t = _timer.RemainingTime(Runner).Value;
+
+            if (_timer.Expired(Runner))
+            {
+                IsEnd = true;
+            }
+            _inGameMessagesUIHander.OnGameTimeReceived((int)t);
+        }
     }
 
     public override void Spawned()
@@ -74,6 +87,12 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             RPC_SetNickName(GameManager.instance.playerNickName);
 
             Debug.Log("Spawned local player");
+            
+            _inGameMessagesUIHander = LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
+
+            
+            _timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
+            
         }
         else
         {
@@ -89,15 +108,13 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             Debug.Log($"{Time.time} Spawned remote player");  
         }
-
+        //Debug.Log("!!!"+NetworkObject.); 
         //Set the Player as a player object
         Runner.SetPlayerObject(Object.InputAuthority, Object);
-
         Kill = 0;
         Dead = 0;
         OnKillIncreased(Kill.ToString());
         OnDeadIncreased(Dead.ToString());
-        
         //Make it easier to tell which player is which.
         transform.name = $"P_{Object.Id}";
     }
@@ -111,10 +128,8 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
                 if (playerLeftNetworkObject == Object)
                     Local.GetComponent<NetworkInGameMessages>().SendInGameRPCMessage(playerLeftNetworkObject.GetComponent<NetworkPlayer>().nickName.ToString(), "left");
             }
-               
         }
-
-
+        
         if (player == Object.InputAuthority)
             Runner.Despawn(Object);
 
@@ -154,7 +169,10 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         
     private void OnKillIncreased(string kill)
     {
-        _textKill.text = kill;
+        if (_inGameMessagesUIHander != null)
+        {
+            _inGameMessagesUIHander.OnGameKillReceived(kill);
+        }
     }
         
     static void OnDeadChanged(Changed<NetworkPlayer> changed)
@@ -164,53 +182,23 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         
     private void OnDeadIncreased(string dead)
     {
-        _texDead.text = Dead.ToString();
+        if (_inGameMessagesUIHander != null)
+        {
+            _inGameMessagesUIHander.OnGameDeadReceived(dead);
+        }
     }
-    
-    static void OnGameTimeChanged(Changed<NetworkPlayer> changed)
-    {
-        Debug.Log($"{Time.time} OnGameTimeChanged value {changed.Behaviour.GameTime}");
 
-        TickTimer newGameTime = changed.Behaviour.GameTime;
-
-        //Load the old value
-        changed.LoadOld();
-
-        TickTimer oldGameTime = changed.Behaviour.GameTime;
-
-        //Check if the GameTime has been decreased
-        if (newGameTime.TargetTick < oldGameTime.TargetTick)
-            changed.Behaviour.OnGameTimeReduced();
-    }
-        
-    private void OnGameTimeReduced()
-    {
-        _textTime.text = GameTime.RemainingTicks(Runner).ToString();
-        IsEnd = true;
-    }
-        
     static void OnStateChanged(Changed<NetworkPlayer> changed)
     {
         Debug.Log($"{Time.time} OnStateChanged IsEnd");
-
-        bool isEndCurrent = changed.Behaviour.IsEnd;
-
-        //Load the old value
-        changed.LoadOld();
-
-        bool isEndOld = changed.Behaviour.IsEnd;
-
-            
-        if (isEndCurrent)
-            changed.Behaviour.OnEnd();
-            
+        changed.Behaviour.OnEnd();
     }
         
     private void OnEnd()
     {
-        Debug.Log($"{Time.time} OnEndTime");
+        Debug.Log($"{Time.time} !!!!!!!!!!! OnEndTime");
     }
-    
+
     void OnDestroy()
     {
         //Get rid of the local camera if we get destroyed as a new one will be spawned with the new Network player
