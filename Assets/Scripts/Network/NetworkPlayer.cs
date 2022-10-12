@@ -33,7 +33,11 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     //Other components
     private NetworkInGameMessages _networkInGameMessages;
     
-    public LocalCameraHandler LocalCameraHandler { get; set;}
+    public LocalCameraHandler LocalCameraHandler {
+    
+        get => _localCameraHandler;
+        private set => _localCameraHandler = value;
+    } 
 
     void Awake()
     {

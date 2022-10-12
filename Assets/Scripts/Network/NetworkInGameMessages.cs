@@ -3,7 +3,7 @@ using Fusion;
 
 public class NetworkInGameMessages : NetworkBehaviour
 {
-    [SerializeField] private InGameMessagesUIHander _inGameMessagesUIHander;
+    private InGameMessagesUIHander _inGameMessagesUIHander;
     
     public void SendInGameRPCMessage(string userNickName, string message)
     {
