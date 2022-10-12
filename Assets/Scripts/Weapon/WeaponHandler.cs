@@ -80,7 +80,7 @@ public class WeaponHandler : NetworkBehaviour
             Debug.Log($"{Time.time} {transform.name} hit hitbox {hitinfo.Hitbox.transform.root.name}");
 
             if (Object.HasStateAuthority)
-                hitinfo.Hitbox.transform.root.GetComponent<HPHandler>().OnTakeDamage(_networkPlayer.nickName.ToString());
+                hitinfo.Hitbox.transform.root.GetComponent<HPHandler>().OnTakeDamage(_networkPlayer.nickName.ToString(), 1, _networkPlayer);
 
             isHitOtherPlayer = true;
 
@@ -110,7 +110,8 @@ public class WeaponHandler : NetworkBehaviour
                 {
                     spawnedGrenade.GetComponent<GrenadeHandler>().Throw(aimForwardVector * 15,
                         Object.InputAuthority,
-                        _networkPlayer.nickName.ToString()
+                        _networkPlayer.nickName.ToString(),
+                        _networkPlayer
                     );
                 });
             
@@ -129,7 +130,8 @@ public class WeaponHandler : NetworkBehaviour
                 {
                     spawnedRocked.GetComponent<RocketHandler>().Fire(Object.InputAuthority,
                         _networkObject,
-                        _networkPlayer.nickName.ToString()
+                        _networkPlayer.nickName.ToString(),
+                        _networkPlayer
                     );
                 });
             

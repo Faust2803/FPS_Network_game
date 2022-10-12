@@ -25,8 +25,9 @@ public class GrenadeHandler : NetworkBehaviour
 
    private NetworkObject _networkObject;
    private NetworkRigidbody _networkRigidbody;
+   private NetworkPlayer _networkPlayer;
    
-   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, string throwByPlayer)
+   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, string throwByPlayer, NetworkPlayer networkPlayer)
    {
       _networkObject = GetComponent<NetworkObject>();
       _networkRigidbody = GetComponent<NetworkRigidbody>();
@@ -35,7 +36,7 @@ public class GrenadeHandler : NetworkBehaviour
 
       _throwByPlayerRef = throwByPlayerRef;
       _throwByPlayer = throwByPlayer;
-
+      _networkPlayer = networkPlayer;
       _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
       
    }
@@ -60,7 +61,7 @@ public class GrenadeHandler : NetworkBehaviour
 
                if (hpHandler != null)
                {
-                  hpHandler.OnTakeDamage(_throwByPlayer, 3);
+                  hpHandler.OnTakeDamage(_throwByPlayer, 3, _networkPlayer);
                }
             }
             

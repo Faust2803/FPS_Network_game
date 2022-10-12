@@ -24,14 +24,16 @@ public class RocketHandler : NetworkBehaviour
     private NetworkObject _fireBynetworkObject;
     
     private NetworkObject _networkObject;
+    private NetworkPlayer _networkPlayer;
     
-    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject,  string fireByPlayer)
+    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject, string fireByPlayer, NetworkPlayer networkPlayer)
     {
         
         _fireByPlayerRef = fireByPlayerRef;
         _fireByPlayer = fireByPlayer;
         _fireBynetworkObject = fireBynetworkObject;
         _networkObject = GetComponent<NetworkObject>();
+        _networkPlayer = networkPlayer;
         _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
     }
 
@@ -87,7 +89,7 @@ public class RocketHandler : NetworkBehaviour
 
                     if (hpHandler != null)
                     {
-                        hpHandler.OnTakeDamage(_fireByPlayer, 5);
+                        hpHandler.OnTakeDamage(_fireByPlayer, 5, _networkPlayer);
                     }
                 } 
                 

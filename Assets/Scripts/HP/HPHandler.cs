@@ -89,7 +89,7 @@ public class HPHandler : NetworkBehaviour
 
 
     //Function only called on the server
-    public void OnTakeDamage(string damageCausedByPlayer, byte damage = 1)
+    public void OnTakeDamage(string damageCausedByPlayer, byte damage, NetworkPlayer networkPlayer)
     {
         //Only take damage while alive
         if (IsDead)
@@ -116,10 +116,10 @@ public class HPHandler : NetworkBehaviour
             
             _networkPlayer.Dead++;
 
-            // if (damageCausedByPlayer != _networkPlayer)
-            // {
-            //     damageCausedByPlayer.Kill++;  
-            // }
+            if (networkPlayer != _networkPlayer)
+            {
+                networkPlayer.Kill++;  
+            }
         }
     }
 
