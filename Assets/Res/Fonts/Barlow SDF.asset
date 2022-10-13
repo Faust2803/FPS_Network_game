@@ -5332,14 +5332,16 @@ MonoBehaviour:
   tabSize: 10
 --- !u!21 &717569023983487584
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Barlow Material
   m_Shader: {fileID: 4800000, guid: a02a7d8c237544f1962732b55a9aebf1, type: 3}
-  m_ShaderKeywords: 
+  m_ValidKeywords:
+  - OUTLINE_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -5382,7 +5384,7 @@ Material:
     - _ColorMask: 15
     - _CullMode: 0
     - _Diffuse: 0.5
-    - _FaceDilate: 0
+    - _FaceDilate: 0.24
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
     - _GlowInner: 0.05
@@ -5396,12 +5398,12 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.498
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 0.875
+    - _ScaleRatioA: 0.804228
     - _ScaleRatioB: 0.7109375
-    - _ScaleRatioC: 0.56875
+    - _ScaleRatioC: 0.35875
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0

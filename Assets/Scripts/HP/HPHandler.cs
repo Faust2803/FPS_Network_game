@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Fusion;
 using TMPro;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class HPHandler : NetworkBehaviour
@@ -16,7 +17,10 @@ public class HPHandler : NetworkBehaviour
     [SerializeField] private MeshRenderer _bodyMeshRenderer;
     [SerializeField] private GameObject _playerModel;
     [SerializeField] private GameObject _deathGameObjectPrefab;
+    [Space]
     [SerializeField] private TextMeshProUGUI _textHP;
+    [SerializeField] private Slider _hpSlider;
+    [Space]
     [SerializeField] private bool _skipSettingStartValues = false;
     [SerializeField] private TextMeshProUGUI _textHPEnemy;
     [SerializeField] private Slider _HPEnemy;
@@ -51,6 +55,7 @@ public class HPHandler : NetworkBehaviour
     void Start()
     {
         _HPEnemy.maxValue = STARTING_HP;
+        _hpSlider.maxValue = STARTING_HP;
         if (!_skipSettingStartValues)
         {
             HP = STARTING_HP;
@@ -202,5 +207,6 @@ public class HPHandler : NetworkBehaviour
          _textHP.text = "HP "+HP;
          _textHPEnemy.text = HP.ToString();
          _HPEnemy.value = HP;
+         _hpSlider.value = HP;
     }
 }

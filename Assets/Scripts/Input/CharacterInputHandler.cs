@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CharacterInputHandler : MonoBehaviour
@@ -32,8 +33,52 @@ public class CharacterInputHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
+/*#if UNITY_STANDALONE_WIN
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        _variableJoystick.gameObject.SetActive(false);
+        _fireButton.gameObject.SetActive(false);
+        _jumpButton.gameObject.SetActive(false);
+        _rockedutton.gameObject.SetActive(false);
+        _grenadeButton.gameObject.SetActive(false);
+#endif*/
+    }
+    
+    private void OnEnable()
+    {
+        _fireButton.onClick.AddListener(OnFire);
+        _jumpButton.onClick.AddListener(OnJump);
+        _rockedutton.onClick.AddListener(OnRockedFire);
+        _grenadeButton.onClick.AddListener(OnGrenadeFire);
+    }
+
+    private void OnDisable()
+    {
+        _fireButton.onClick.RemoveListener(OnFire);
+        _jumpButton.onClick.RemoveListener(OnJump);
+        _rockedutton.onClick.RemoveListener(OnRockedFire);
+        _grenadeButton.onClick.RemoveListener(OnGrenadeFire);
+    }
+
+    private void OnJump()
+    {
+        _isJumpButtonPressed = true;
+    }
+    
+    private void OnFire()
+    {
+        _isFireButtonPressed = true;
+    }
+    
+    private void OnRockedFire()
+    {
+        _isRockedFireButtonPressed = true;
+    }
+    
+    private void OnGrenadeFire()
+    {
+        _isGrenadeFireButtonPressed = true;
     }
 
     // Update is called once per frame
@@ -63,8 +108,8 @@ public class CharacterInputHandler : MonoBehaviour
             _isRockedFireButtonPressed = true;
 
         if (Input.GetKeyDown(KeyCode.G))
-            _isGrenadeFireButtonPressed = true;*/
-
+            _isGrenadeFireButtonPressed = true;
+*/
 #endif
 #if UNITY_EDITOR
         //View input
@@ -74,21 +119,6 @@ public class CharacterInputHandler : MonoBehaviour
         Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
         _moveInputVector.x = direction.x;
          _moveInputVector.y = direction.z;
-        
-        //Jump
-        /*if (Input.GetKeyDown(KeyCode.Space))
-            _isJumpButtonPressed = true;
-
-        //Fire
-        if (Input.GetMouseButtonDown(0))
-            _isFireButtonPressed = true;
-        if (Input.GetMouseButtonDown(1))
-            _isRockedFireButtonPressed = true;
-
-        if (Input.GetKeyDown(KeyCode.G))
-            _isGrenadeFireButtonPressed = true;
-        
-        */
 #endif
 #if UNITY_ANDROID
         //View input

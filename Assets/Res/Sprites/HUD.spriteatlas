@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: HUD
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 456732d45784c6a4cbcb2336b78fe6de, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 4c3208e0a11a52f4a80c11408e05049e, type: 3}
+  - {fileID: 21300000, guid: d460b95181ab2ba46832a1a104556058, type: 3}
+  - {fileID: 21300000, guid: 5c083c716bb7dce4ba1451a150c60016, type: 3}
+  - {fileID: 21300000, guid: c870338126f2ca941b681eb8dffeb204, type: 3}
+  - {fileID: 21300000, guid: 0fc1076207ae43e4a8c55ea88f53c740, type: 3}
+  - {fileID: 21300000, guid: e1c04f2399238ae46807f00bb5266538, type: 3}
+  - {fileID: 21300000, guid: 010a6e5305fa7004f89c5d317b7b47d4, type: 3}
+  - {fileID: 21300000, guid: 4e3903c30c3a06744b40905f991affd3, type: 3}
+  - {fileID: 21300000, guid: 65691dd3b6556ee488e6dffdcb1a7673, type: 3}
+  - {fileID: 21300000, guid: 79cfb256ac1084b4fba7f9ac955035f4, type: 3}
+  - {fileID: 21300000, guid: 510c0566e9d5d00418fa43ac284233d2, type: 3}
+  - {fileID: 21300000, guid: 91ae49275b012d54a9a79ad539a7ba61, type: 3}
+  - {fileID: 21300000, guid: cb9dc5575d598da4ab754b39d97815d2, type: 3}
+  - {fileID: 21300000, guid: 2cd61988f7d735f40aa1269fec62daf6, type: 3}
+  - {fileID: 21300000, guid: a04d9b799fb7b3c46a2258907ce10923, type: 3}
+  - {fileID: 21300000, guid: dd3028893e58d9845af5e72de3107a63, type: 3}
+  - {fileID: 21300000, guid: 5bad391adf501014c8fc409d86ebf990, type: 3}
+  - {fileID: 21300000, guid: 5b56d9fa0e8bd6e409ed188db38a692c, type: 3}
+  - {fileID: 21300000, guid: 8608368c305a93e45b31bbff970468db, type: 3}
+  - {fileID: 21300000, guid: 43814dbdd7cf9004c89f73adf75f4a83, type: 3}
+  - {fileID: 21300000, guid: f8db5dffda7fdc64aacdfa4d730533d5, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Circle 01
+  - template_counter2
+  - circle icon
+  - Aim
+  - template_timer
+  - Symbol Grenade Launcher
+  - Handle_Plain
+  - scale7 3
+  - template_counter1 (2)
+  - Shoot Icon 01
+  - scale7 2
+  - Symbol Machine Gun
+  - progressBar
+  - Circle Small 01
+  - Jamie1
+  - Action Button Background
+  - Icon Kills
+  - AllAxis_Outline
+  - Symbol Rocket Launcher
+  - Icon Death
+  - icon_bounce
+  m_RenderDataMap: {}
+  m_Tag: HUD
+  m_IsVariant: 0
