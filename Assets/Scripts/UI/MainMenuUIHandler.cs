@@ -8,12 +8,21 @@ public class MainMenuUIHandler : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _inputField;
     [SerializeField] private Button _entryButton;
+    [SerializeField] private GameObject _legenda;
 
     // Start is called before the first frame update
     void Start()
     {
         if (PlayerPrefs.HasKey("PlayerNickname"))
             _inputField.text = PlayerPrefs.GetString("PlayerNickname");
+        
+#if UNITY_EDITOR
+        _legenda.SetActive(true);
+#elif UNITY_STANDALONE_WIN
+        _legenda.SetActive(true);
+#else
+       _legenda.SetActive(false);
+#endif
     }
 
     private void OnEnable()

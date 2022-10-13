@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CharacterInputHandler : MonoBehaviour
@@ -33,52 +30,37 @@ public class CharacterInputHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-/*#if UNITY_STANDALONE_WIN
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        
-        _variableJoystick.gameObject.SetActive(false);
-        _fireButton.gameObject.SetActive(false);
-        _jumpButton.gameObject.SetActive(false);
-        _rockedutton.gameObject.SetActive(false);
-        _grenadeButton.gameObject.SetActive(false);
-#endif*/
-    }
-    
-    private void OnEnable()
-    {
-        _fireButton.onClick.AddListener(OnFire);
-        _jumpButton.onClick.AddListener(OnJump);
-        _rockedutton.onClick.AddListener(OnRockedFire);
-        _grenadeButton.onClick.AddListener(OnGrenadeFire);
+#if UNITY_EDITOR
+        //View input
+        PCInput(false);
+
+#elif UNITY_STANDALONE_WIN
+        PCInput(true);
+#else
+         PCInput(false);
+#endif
     }
 
-    private void OnDisable()
+    private void PCInput(bool value)
     {
-        _fireButton.onClick.RemoveListener(OnFire);
-        _jumpButton.onClick.RemoveListener(OnJump);
-        _rockedutton.onClick.RemoveListener(OnRockedFire);
-        _grenadeButton.onClick.RemoveListener(OnGrenadeFire);
-    }
-
-    private void OnJump()
-    {
-        _isJumpButtonPressed = true;
-    }
-    
-    private void OnFire()
-    {
-        _isFireButtonPressed = true;
-    }
-    
-    private void OnRockedFire()
-    {
-        _isRockedFireButtonPressed = true;
-    }
-    
-    private void OnGrenadeFire()
-    {
-        _isGrenadeFireButtonPressed = true;
+        if (value)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            _variableJoystick.gameObject.SetActive(false);
+            _fireButton.gameObject.SetActive(false);
+            _jumpButton.gameObject.SetActive(false);
+            _rockedutton.gameObject.SetActive(false);
+            _grenadeButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            _variableJoystick.gameObject.SetActive(true);
+            _fireButton.gameObject.SetActive(true);
+            _jumpButton.gameObject.SetActive(true);
+            _rockedutton.gameObject.SetActive(true);
+            _grenadeButton.gameObject.SetActive(true);
+        }
     }
 
     // Update is called once per frame
@@ -87,9 +69,37 @@ public class CharacterInputHandler : MonoBehaviour
         if (!_characterMovementHandler.Object.HasInputAuthority)
             return;
 
-#if UNITY_STANDALONE_WIN
+#if UNITY_EDITOR
+        //View input
+        _viewInputVector.x = Input.GetAxis("Mouse X");
+        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+        
+        //Move input
+        Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
+        _moveInputVector.x = Input.GetAxis("Horizontal");
+        _moveInputVector.y = Input.GetAxis("Vertical");
+        if (direction != Vector3.zero)
+        {
+            _moveInputVector.x = direction.x;
+            _moveInputVector.y = direction.z;
+        }
+        
+        //Jump
+        if (Input.GetKeyDown(KeyCode.Space))
+            _isJumpButtonPressed = true;
 
-       /* //View input
+        //Fire
+        if (Input.GetMouseButtonDown(0))
+            _isFireButtonPressed = true;
+        if (Input.GetMouseButtonDown(1))
+            _isRockedFireButtonPressed = true;
+
+        if (Input.GetKeyDown(KeyCode.G))
+            _isGrenadeFireButtonPressed = true;
+        
+#elif UNITY_STANDALONE_WIN
+
+        //View input
         _viewInputVector.x = Input.GetAxis("Mouse X");
         _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
 
@@ -109,18 +119,8 @@ public class CharacterInputHandler : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
             _isGrenadeFireButtonPressed = true;
-*/
-#endif
-#if UNITY_EDITOR
-        //View input
-        _viewInputVector.x = Input.GetAxis("Mouse X");
-        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
         
-        Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
-        _moveInputVector.x = direction.x;
-         _moveInputVector.y = direction.z;
-#endif
-#if UNITY_ANDROID
+#else
         //View input
         _viewInputVector.x = Input.GetAxis("Mouse X");
         _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
@@ -158,5 +158,41 @@ public class CharacterInputHandler : MonoBehaviour
         _isGrenadeFireButtonPressed = false;
         _isRockedFireButtonPressed = false;
         return networkInputData;
+    }
+    
+    private void OnJump()
+    {
+        _isJumpButtonPressed = true;
+    }
+    
+    private void OnFire()
+    {
+        _isFireButtonPressed = true;
+    }
+    
+    private void OnRockedFire()
+    {
+        _isRockedFireButtonPressed = true;
+    }
+    
+    private void OnGrenadeFire()
+    {
+        _isGrenadeFireButtonPressed = true;
+    }
+    
+    private void OnEnable()
+    {
+        _fireButton.onClick.AddListener(OnFire);
+        _jumpButton.onClick.AddListener(OnJump);
+        _rockedutton.onClick.AddListener(OnRockedFire);
+        _grenadeButton.onClick.AddListener(OnGrenadeFire);
+    }
+
+    private void OnDisable()
+    {
+        _fireButton.onClick.RemoveListener(OnFire);
+        _jumpButton.onClick.RemoveListener(OnJump);
+        _rockedutton.onClick.RemoveListener(OnRockedFire);
+        _grenadeButton.onClick.RemoveListener(OnGrenadeFire);
     }
 }

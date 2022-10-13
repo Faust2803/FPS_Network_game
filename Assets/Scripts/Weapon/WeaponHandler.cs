@@ -6,6 +6,11 @@ using UnityEngine.Serialization;
 
 public class WeaponHandler : NetworkBehaviour
 {
+    private const float  HIT_DISTANCE = 100;
+    private const float  FIRE_TIMEOUT = 0.25F;
+    private const float  ROCKET_TIMEOUT = 3.5F;
+    private const float  GRENADE_TIMEOUT = 2F;
+    
     
     [Header("Prefabs")] 
     [SerializeField] private GrenadeHandler _grenadeHandler;
@@ -49,8 +54,22 @@ public class WeaponHandler : NetworkBehaviour
         if (GetInput(out NetworkInputData networkInputData))
         {
             if (networkInputData.isFireButtonPressed)
+            {
                 Fire(networkInputData.aimForwardVector);
-            
+            }
+            else
+            {
+                Runner.LagCompensation.Raycast(_aimPoint.position, networkInputData.aimForwardVector, HIT_DISTANCE, Object.InputAuthority, out var hitinfo, _collisionLayers, HitOptions.IgnoreInputAuthority);
+                if (hitinfo.Hitbox != null)
+                {
+                    AutoFire(hitinfo);
+                }
+                else if (hitinfo.Collider != null)
+                {
+                    Debug.Log($"{Time.time} {transform.name} hit PhysX collider {hitinfo.Collider.transform.name}");
+                }
+            }
+
             if (networkInputData.isGrenadeFireButtonPressed)
                 FireGrenade(networkInputData.aimForwardVector);
             
@@ -58,22 +77,35 @@ public class WeaponHandler : NetworkBehaviour
                 FireRocked(networkInputData.aimForwardVector);
         }
     }
-
-    void Fire(Vector3 aimForwardVector)
+    
+    void AutoFire(LagCompensatedHit hitinfo)
     {
         //Limit fire rate
-        if (Time.time - _lastTimeFired < 0.15f)
+        if (Time.time - _lastTimeFired < FIRE_TIMEOUT)
             return;
 
         StartCoroutine(FireEffectCO());
 
-        Runner.LagCompensation.Raycast(_aimPoint.position, aimForwardVector, 100, Object.InputAuthority, out var hitinfo, _collisionLayers, HitOptions.IgnoreInputAuthority);
+        Debug.Log($"{Time.time} {transform.name} hit hitbox {hitinfo.Hitbox.transform.root.name}");
 
-        float hitDistance = 100;
+        if (Object.HasStateAuthority)
+            hitinfo.Hitbox.transform.root.GetComponent<HPHandler>().OnTakeDamage(_networkPlayer.nickName.ToString(), 1, _networkPlayer);
+
+        _lastTimeFired = Time.time;
+    }
+
+    void Fire(Vector3 aimForwardVector)
+    {
+        //Limit fire rate
+        if (Time.time - _lastTimeFired < FIRE_TIMEOUT)
+            return;
+
+        StartCoroutine(FireEffectCO());
+
+        Runner.LagCompensation.Raycast(_aimPoint.position, aimForwardVector, HIT_DISTANCE, Object.InputAuthority, out var hitinfo, _collisionLayers, HitOptions.IgnoreInputAuthority);
+
+
         bool isHitOtherPlayer = false;
-
-        if (hitinfo.Distance > 0)
-            hitDistance = hitinfo.Distance;
 
         if (hitinfo.Hitbox != null)
         {
@@ -92,8 +124,8 @@ public class WeaponHandler : NetworkBehaviour
 
         //Debug
         if (isHitOtherPlayer)
-            Debug.DrawRay(_aimPoint.position, aimForwardVector * hitDistance, Color.red, 1);
-        else Debug.DrawRay(_aimPoint.position, aimForwardVector * hitDistance, Color.green, 1);
+            Debug.DrawRay(_aimPoint.position, aimForwardVector * HIT_DISTANCE, Color.red, 1);
+        else Debug.DrawRay(_aimPoint.position, aimForwardVector * HIT_DISTANCE, Color.green, 1);
 
         _lastTimeFired = Time.time;
     }
@@ -115,7 +147,7 @@ public class WeaponHandler : NetworkBehaviour
                     );
                 });
             
-            _grenadeTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 2.0F);
+            _grenadeTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, GRENADE_TIMEOUT);
         }
     }
     
@@ -135,7 +167,7 @@ public class WeaponHandler : NetworkBehaviour
                     );
                 });
             
-            _rockedTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, 3.5F);
+            _rockedTimerFiredDelay = TickTimer.CreateFromSeconds(Runner, ROCKET_TIMEOUT);
         }
     }
     

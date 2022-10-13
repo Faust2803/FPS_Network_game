@@ -20,15 +20,27 @@ SpriteAtlas:
       readable: 0
       crunchedCompression: 0
       sRGB: 1
-    platformSettings: []
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     packingSettings:
       serializedVersion: 2
-      padding: 4
+      padding: 8
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 1
       enableTightPacking: 1
-      enableAlphaDilation: 0
+      enableAlphaDilation: 1
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
@@ -43,6 +55,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5c083c716bb7dce4ba1451a150c60016, type: 3}
   - {fileID: 21300000, guid: c870338126f2ca941b681eb8dffeb204, type: 3}
   - {fileID: 21300000, guid: 0fc1076207ae43e4a8c55ea88f53c740, type: 3}
+  - {fileID: 21300000, guid: 5844f4231dd5d7f4393fa76c5af4c848, type: 3}
   - {fileID: 21300000, guid: e1c04f2399238ae46807f00bb5266538, type: 3}
   - {fileID: 21300000, guid: 010a6e5305fa7004f89c5d317b7b47d4, type: 3}
   - {fileID: 21300000, guid: 4e3903c30c3a06744b40905f991affd3, type: 3}
@@ -55,7 +68,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a04d9b799fb7b3c46a2258907ce10923, type: 3}
   - {fileID: 21300000, guid: dd3028893e58d9845af5e72de3107a63, type: 3}
   - {fileID: 21300000, guid: 5bad391adf501014c8fc409d86ebf990, type: 3}
-  - {fileID: 21300000, guid: 5b56d9fa0e8bd6e409ed188db38a692c, type: 3}
   - {fileID: 21300000, guid: 8608368c305a93e45b31bbff970468db, type: 3}
   - {fileID: 21300000, guid: 43814dbdd7cf9004c89f73adf75f4a83, type: 3}
   - {fileID: 21300000, guid: f8db5dffda7fdc64aacdfa4d730533d5, type: 3}
@@ -65,6 +77,7 @@ SpriteAtlas:
   - circle icon
   - Aim
   - template_timer
+  - Handle_Ridged_Arrows
   - Symbol Grenade Launcher
   - Handle_Plain
   - scale7 3
@@ -77,7 +90,6 @@ SpriteAtlas:
   - Jamie1
   - Action Button Background
   - Icon Kills
-  - AllAxis_Outline
   - Symbol Rocket Launcher
   - Icon Death
   - icon_bounce
