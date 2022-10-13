@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterInputHandler : MonoBehaviour
 {
+    [SerializeField] private VariableJoystick _variableJoystick;
+    [SerializeField] private Button _fireButton;
+    [SerializeField] private Button _jumpButton;
+    [SerializeField] private Button _rockedutton;
+    [SerializeField] private Button _grenadeButton;
+
+    
     private Vector2 _moveInputVector = Vector2.zero;
     private Vector2 _viewInputVector = Vector2.zero;
     private bool _isJumpButtonPressed = false;
@@ -24,17 +32,19 @@ public class CharacterInputHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!_characterMovementHandler.Object.HasInputAuthority)
             return;
 
-        //View input
+#if UNITY_STANDALONE_WIN
+
+       /* //View input
         _viewInputVector.x = Input.GetAxis("Mouse X");
         _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
 
@@ -53,8 +63,42 @@ public class CharacterInputHandler : MonoBehaviour
             _isRockedFireButtonPressed = true;
 
         if (Input.GetKeyDown(KeyCode.G))
-            _isGrenadeFireButtonPressed = true;
+            _isGrenadeFireButtonPressed = true;*/
 
+#endif
+#if UNITY_EDITOR
+        //View input
+        _viewInputVector.x = Input.GetAxis("Mouse X");
+        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+        
+        Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
+        _moveInputVector.x = direction.x;
+         _moveInputVector.y = direction.z;
+        
+        //Jump
+        /*if (Input.GetKeyDown(KeyCode.Space))
+            _isJumpButtonPressed = true;
+
+        //Fire
+        if (Input.GetMouseButtonDown(0))
+            _isFireButtonPressed = true;
+        if (Input.GetMouseButtonDown(1))
+            _isRockedFireButtonPressed = true;
+
+        if (Input.GetKeyDown(KeyCode.G))
+            _isGrenadeFireButtonPressed = true;
+        
+        */
+#endif
+#if UNITY_ANDROID
+        //View input
+        _viewInputVector.x = Input.GetAxis("Mouse X");
+        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+        
+        Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
+        _moveInputVector.x = direction.x;
+         _moveInputVector.y = direction.z;
+#endif
         //Set view
         _localCameraHandler.SetViewInputVector(_viewInputVector);
 
