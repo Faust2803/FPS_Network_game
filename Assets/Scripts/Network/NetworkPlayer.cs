@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Fusion;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine.Serialization;
 
 public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
@@ -43,6 +44,28 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         _networkInGameMessages = GetComponent<NetworkInGameMessages>();
     }
 
+    private void Start()
+    {
+        if (Object.HasInputAuthority)
+        {
+            //Disable main camera
+            if (Camera.main != null)
+                Camera.main.gameObject.SetActive(false);
+
+            //Enable 1 audio listner
+            AudioListener audioListener = GetComponentInChildren<AudioListener>(true);
+            audioListener.enabled = true;
+
+
+            //Enable the local camera
+            _localCameraHandler.LocalCamera.enabled = true;
+
+            //Detach camera if enabled
+            _localCameraHandler.transform.parent = null;
+        }
+    }
+
+
     public override void FixedUpdateNetwork()
     {
         if (Object.HasInputAuthority && !IsEnd)
@@ -66,7 +89,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             //Sets the layer of the local players model
             Utils.SetRenderLayerInChildren(_playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
 
-            //Disable main camera
+           /* //Disable main camera
             if (Camera.main != null)
                 Camera.main.gameObject.SetActive(false);
 
@@ -80,7 +103,8 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             //Detach camera if enabled
             _localCameraHandler.transform.parent = null;
-
+            Debug.Log("!!!!! Spawned");
+            */
             //Enable UI for local player
             _localUI.SetActive(true);
 
