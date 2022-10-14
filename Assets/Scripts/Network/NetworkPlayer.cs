@@ -89,8 +89,8 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             //Sets the layer of the local players model
             Utils.SetRenderLayerInChildren(_playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
 
-           /* //Disable main camera
-            if (Camera.main != null)
+            //Disable main camera
+            /*if (Camera.main != null)
                 Camera.main.gameObject.SetActive(false);
 
             //Enable 1 audio listner
@@ -102,9 +102,8 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             _localCameraHandler.LocalCamera.enabled = true;
 
             //Detach camera if enabled
-            _localCameraHandler.transform.parent = null;
-            Debug.Log("!!!!! Spawned");
-            */
+            _localCameraHandler.transform.parent = null;*/
+
             //Enable UI for local player
             _localUI.SetActive(true);
 
@@ -115,7 +114,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             _inGameMessagesUIHander = LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
 
             
-            _timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
+            //_timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
             
         }
         else

@@ -69,7 +69,23 @@ public class CharacterInputHandler : MonoBehaviour
         if (!_characterMovementHandler.Object.HasInputAuthority)
             return;
 
+        
+        
+        for (var i = 0; i < Input.touchCount; i++)
+        {
+            var ray = Camera.main.ScreenPointToRay (Input.GetTouch(i).position);
+            if (Physics.Raycast (ray, out RaycastHit hitInfo)) {
+                // Create a particle if hit
+                Debug.Log("!!!!!!!   " +hitInfo.transform.gameObject.name);
+            }
+        }
+        
 #if UNITY_EDITOR
+        if (Input.touchCount > 0 )
+        {
+            
+        }
+        
         //View input
         _viewInputVector.x = Input.GetAxis("Mouse X");
         _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
