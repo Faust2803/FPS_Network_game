@@ -75,8 +75,10 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             if (_timer.Expired(Runner))
             {
                 IsEnd = true;
+                _timer = TickTimer.None;
             }
             _inGameMessagesUIHander.OnGameTimeReceived((int)t);
+             
         }
     }
 
@@ -114,7 +116,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             _inGameMessagesUIHander = LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
 
             
-            //_timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
+            _timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
             
         }
         else

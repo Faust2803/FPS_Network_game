@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterInputHandler : MonoBehaviour
 {
-    [SerializeField] private VariableJoystick _variableJoystick;
+    [SerializeField] private VariableJoystick _joystickM;
+    [SerializeField] private VariableJoystick _joystickR;
     [SerializeField] private Button _fireButton;
     [SerializeField] private Button _jumpButton;
     [SerializeField] private Button _rockedutton;
@@ -47,7 +50,8 @@ public class CharacterInputHandler : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            _variableJoystick.gameObject.SetActive(false);
+            _joystickM.gameObject.SetActive(false);
+            _joystickR.gameObject.SetActive(false);
             _fireButton.gameObject.SetActive(false);
             _jumpButton.gameObject.SetActive(false);
             _rockedutton.gameObject.SetActive(false);
@@ -55,7 +59,8 @@ public class CharacterInputHandler : MonoBehaviour
         }
         else
         {
-            _variableJoystick.gameObject.SetActive(true);
+            _joystickM.gameObject.SetActive(true);
+            _joystickR.gameObject.SetActive(true);
             _fireButton.gameObject.SetActive(true);
             _jumpButton.gameObject.SetActive(true);
             _rockedutton.gameObject.SetActive(true);
@@ -69,29 +74,21 @@ public class CharacterInputHandler : MonoBehaviour
         if (!_characterMovementHandler.Object.HasInputAuthority)
             return;
 
-        
-        
-        for (var i = 0; i < Input.touchCount; i++)
-        {
-            var ray = Camera.main.ScreenPointToRay (Input.GetTouch(i).position);
-            if (Physics.Raycast (ray, out RaycastHit hitInfo)) {
-                // Create a particle if hit
-                Debug.Log("!!!!!!!   " +hitInfo.transform.gameObject.name);
-            }
-        }
-        
+
 #if UNITY_EDITOR
-        if (Input.touchCount > 0 )
-        {
-            
-        }
         
         //View input
-        _viewInputVector.x = Input.GetAxis("Mouse X");
-        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
-        
+        // Vector3 direction1 = Vector3.forward * _joystickR.Vertical + Vector3.right * _joystickR.Horizontal;
+        // _viewInputVector.x = direction1.x;
+        // _viewInputVector.y = direction1.z * -1; //Invert the mouse look
+        // if (direction1 != Vector3.zero)
+        {
+            _viewInputVector.x = Input.GetAxis("Mouse X");
+            _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+        }
+
         //Move input
-        Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
+        Vector3 direction = Vector3.forward * _joystickM.Vertical + Vector3.right * _joystickM.Horizontal;
         _moveInputVector.x = Input.GetAxis("Horizontal");
         _moveInputVector.y = Input.GetAxis("Vertical");
         if (direction != Vector3.zero)
@@ -115,7 +112,6 @@ public class CharacterInputHandler : MonoBehaviour
         
 #elif UNITY_STANDALONE_WIN
 
-        //View input
         _viewInputVector.x = Input.GetAxis("Mouse X");
         _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
 
@@ -138,10 +134,11 @@ public class CharacterInputHandler : MonoBehaviour
         
 #else
         //View input
-        _viewInputVector.x = Input.GetAxis("Mouse X");
-        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+        Vector3 direction1 = Vector3.forward * _joystickR.Vertical + Vector3.right * _joystickR.Horizontal;
+        _viewInputVector.x = direction1.x;
+        _viewInputVector.y = direction1.z * -1; //Invert the mouse look
         
-        Vector3 direction = Vector3.forward * _variableJoystick.Vertical + Vector3.right * _variableJoystick.Horizontal;
+        Vector3 direction = Vector3.forward * _joystickM.Vertical + Vector3.right * _joystickM.Horizontal;
         _moveInputVector.x = direction.x;
          _moveInputVector.y = direction.z;
 #endif
