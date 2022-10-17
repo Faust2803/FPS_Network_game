@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 public class RocketHandler : NetworkBehaviour
 {
-    private const byte SECOND = 5;
+    private const byte SECOND = 10;
     private const int ROCKED_SPEED = 23;
     
     [Header("Prefabs")] 
@@ -19,21 +19,27 @@ public class RocketHandler : NetworkBehaviour
 
     private List<LagCompensatedHit> _hits = new List<LagCompensatedHit>();
     
-    private PlayerRef _fireByPlayerRef;
-    private string _fireByPlayer;
+    private PlayerRef _playerRef;
+    private string _ownerPlayerName;
     private NetworkObject _fireBynetworkObject;
     
     private NetworkObject _networkObject;
+    private NetworkRigidbody _networkRigidbody;
     private NetworkPlayer _networkPlayer;
     
-    public void Fire(PlayerRef fireByPlayerRef, NetworkObject fireBynetworkObject, string fireByPlayer, NetworkPlayer networkPlayer)
+    public void Fire(PlayerRef playerRef, string ownerPlayerName, NetworkPlayer networkPlayer, Vector3 throwForce, NetworkObject fireBynetworkObject)
     {
-        
-        _fireByPlayerRef = fireByPlayerRef;
-        _fireByPlayer = fireByPlayer;
-        _fireBynetworkObject = fireBynetworkObject;
         _networkObject = GetComponent<NetworkObject>();
+        _networkRigidbody = GetComponent<NetworkRigidbody>();
+        
+        //_networkRigidbody.Rigidbody.AddForce(throwForce, ForceMode.Force);
+        
+        _playerRef = playerRef;
+        _ownerPlayerName = ownerPlayerName;
         _networkPlayer = networkPlayer;
+        
+        _fireBynetworkObject = fireBynetworkObject;
+
         _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
     }
 
@@ -41,7 +47,7 @@ public class RocketHandler : NetworkBehaviour
     {
         transform.position += transform.forward * Runner.DeltaTime * ROCKED_SPEED;
         
-         //if (Object.HasInputAuthority)
+         if (Runner.IsServer)
          {
             if (_explodeTickTimer.Expired(Runner))
             {
@@ -52,7 +58,7 @@ public class RocketHandler : NetworkBehaviour
             var hitCounter =
                 Runner.LagCompensation.OverlapSphere(_checkForImpactPoint.position,
                     0.5F,
-                    _fireByPlayerRef, 
+                    _playerRef, 
                     _hits, 
                     _collisionLayers,
                     HitOptions.IncludePhysX
@@ -73,12 +79,11 @@ public class RocketHandler : NetworkBehaviour
                     }
                 }
             }
-
             if (isValidHit)
             {
                 hitCounter = Runner.LagCompensation.OverlapSphere(_checkForImpactPoint.position,
                     5,
-                    _fireByPlayerRef,
+                    _playerRef,
                     _hits,
                     _collisionLayers,
                     HitOptions.None);
@@ -89,24 +94,26 @@ public class RocketHandler : NetworkBehaviour
 
                     if (hpHandler != null)
                     {
-                        hpHandler.OnTakeDamage(_fireByPlayer, 5, _networkPlayer);
+                        
+                        hpHandler.OnTakeDamage(_ownerPlayerName, 5, _networkPlayer);
                     }
-                } 
-                Debug.LogWarning("!!!!!"+_networkPlayer.Id);
-               
+                }
+
                 Runner.Despawn(_networkObject);
              
                 _explodeTickTimer = TickTimer.None;
             }
         }
-        
-        
     }
     
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         //MeshRenderer grenadeMesh = GetComponentInChildren<MeshRenderer>();
 
-        Instantiate(_explosionParticleSystemPrefab, _checkForImpactPoint.position, Quaternion.identity);
+        //Instantiate(_explosionParticleSystemPrefab, _checkForImpactPoint.position, Quaternion.identity);
+        
+        MeshRenderer grenadeMesh = GetComponentInChildren<MeshRenderer>();
+
+        Instantiate(_explosionParticleSystemPrefab, grenadeMesh.transform.position, Quaternion.identity);
     }
 }

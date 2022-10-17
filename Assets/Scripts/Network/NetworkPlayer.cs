@@ -68,18 +68,18 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
     public override void FixedUpdateNetwork()
     {
-        if (Object.HasInputAuthority && !IsEnd)
-        {
-            var t = _timer.RemainingTime(Runner).Value;
-
-            if (_timer.Expired(Runner))
-            {
-                IsEnd = true;
-                _timer = TickTimer.None;
-            }
-            _inGameMessagesUIHander.OnGameTimeReceived((int)t);
-             
-        }
+        // if (Object.HasInputAuthority && !IsEnd)
+        // {
+        //     var t = _timer.RemainingTime(Runner).Value;
+        //
+        //     if (_timer.Expired(Runner))
+        //     {
+        //         IsEnd = true;
+        //         _timer = TickTimer.None;
+        //     }
+        //     _inGameMessagesUIHander.OnGameTimeReceived((int)t);
+        //      
+        // }
     }
 
     public override void Spawned()
@@ -116,7 +116,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             _inGameMessagesUIHander = LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
 
             
-            _timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
+            //_timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
             
         }
         else
@@ -221,7 +221,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         
     private void OnEnd()
     {
-        Debug.Log($"{Time.time} !!!!!!!!!!! OnEndTime");
+        //Debug.Log($"{Time.time} !!!!!!!!!!! OnEndTime");
     }
 
     void OnDestroy()

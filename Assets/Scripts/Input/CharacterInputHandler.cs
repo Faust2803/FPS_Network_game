@@ -19,6 +19,15 @@ public class CharacterInputHandler : MonoBehaviour
     private bool _isFireButtonPressed = false;
     private bool _isGrenadeFireButtonPressed = false;
     private bool _isRockedFireButtonPressed = false;
+    
+    private enum InputsType
+    {
+        Unity,
+        Window,
+        Mobile
+    }
+
+    private InputsType _myInput;
 
     //Other components
     private LocalCameraHandler _localCameraHandler;
@@ -34,19 +43,29 @@ public class CharacterInputHandler : MonoBehaviour
     void Start()
     {
 #if UNITY_EDITOR
-        //View input
-        PCInput(false);
-
+        _myInput = InputsType.Unity;
 #elif UNITY_STANDALONE_WIN
-        PCInput(true);
+       _myInput = InputsType.Window;
 #else
-         PCInput(false);
+         _myInput = InputsType.Mobile;
 #endif
+        PCInput();
     }
 
-    private void PCInput(bool value)
+    private void PCInput()
     {
-        if (value)
+        if (_myInput != InputsType.Window)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            _joystickM.gameObject.SetActive(false);
+            _joystickR.gameObject.SetActive(false);
+            _fireButton.gameObject.SetActive(false);
+            _jumpButton.gameObject.SetActive(false);
+            _rockedutton.gameObject.SetActive(false);
+            _grenadeButton.gameObject.SetActive(false);
+        }
+        else if  (_myInput != InputsType.Unity)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -74,74 +93,61 @@ public class CharacterInputHandler : MonoBehaviour
         if (!_characterMovementHandler.Object.HasInputAuthority)
             return;
 
-
-#if UNITY_EDITOR
-        
-        //View input
-        // Vector3 direction1 = Vector3.forward * _joystickR.Vertical + Vector3.right * _joystickR.Horizontal;
-        // _viewInputVector.x = direction1.x;
-        // _viewInputVector.y = direction1.z * -1; //Invert the mouse look
-        // if (direction1 != Vector3.zero)
+        if (_myInput != InputsType.Window)
         {
             _viewInputVector.x = Input.GetAxis("Mouse X");
             _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
-        }
 
-        //Move input
-        Vector3 direction = Vector3.forward * _joystickM.Vertical + Vector3.right * _joystickM.Horizontal;
-        _moveInputVector.x = Input.GetAxis("Horizontal");
-        _moveInputVector.y = Input.GetAxis("Vertical");
-        if (direction != Vector3.zero)
+            //Move input
+            _moveInputVector.x = Input.GetAxis("Horizontal");
+            _moveInputVector.y = Input.GetAxis("Vertical");
+
+            //Jump
+            if (Input.GetKeyDown(KeyCode.Space))
+                _isJumpButtonPressed = true;
+
+            //Fire
+            if (Input.GetMouseButtonDown(0))
+                _isFireButtonPressed = true;
+            if (Input.GetMouseButtonDown(1))
+                _isRockedFireButtonPressed = true;
+
+            if (Input.GetKeyDown(KeyCode.G))
+                _isGrenadeFireButtonPressed = true;
+        }
+        else if  (_myInput != InputsType.Unity)
         {
+            _viewInputVector.x = Input.GetAxis("Mouse X");
+            _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
+
+            //Move input
+            _moveInputVector.x = Input.GetAxis("Horizontal");
+            _moveInputVector.y = Input.GetAxis("Vertical");
+
+            //Jump
+            if (Input.GetKeyDown(KeyCode.Space))
+                _isJumpButtonPressed = true;
+
+            //Fire
+            if (Input.GetMouseButtonDown(0))
+                _isFireButtonPressed = true;
+            if (Input.GetMouseButtonDown(1))
+                _isRockedFireButtonPressed = true;
+
+            if (Input.GetKeyDown(KeyCode.G))
+                _isGrenadeFireButtonPressed = true;
+        }
+        else
+        {
+            //View input
+            Vector3 direction1 = Vector3.forward * _joystickR.Vertical + Vector3.right * _joystickR.Horizontal;
+            _viewInputVector.x = direction1.x;
+            _viewInputVector.y = direction1.z * -1; //Invert the mouse look
+        
+            Vector3 direction = Vector3.forward * _joystickM.Vertical + Vector3.right * _joystickM.Horizontal;
             _moveInputVector.x = direction.x;
             _moveInputVector.y = direction.z;
         }
-        
-        //Jump
-        if (Input.GetKeyDown(KeyCode.Space))
-            _isJumpButtonPressed = true;
-
-        //Fire
-        if (Input.GetMouseButtonDown(0))
-            _isFireButtonPressed = true;
-        if (Input.GetMouseButtonDown(1))
-            _isRockedFireButtonPressed = true;
-
-        if (Input.GetKeyDown(KeyCode.G))
-            _isGrenadeFireButtonPressed = true;
-        
-#elif UNITY_STANDALONE_WIN
-
-        _viewInputVector.x = Input.GetAxis("Mouse X");
-        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; //Invert the mouse look
-
-        //Move input
-        _moveInputVector.x = Input.GetAxis("Horizontal");
-        _moveInputVector.y = Input.GetAxis("Vertical");
-
-        //Jump
-        if (Input.GetKeyDown(KeyCode.Space))
-            _isJumpButtonPressed = true;
-
-        //Fire
-        if (Input.GetMouseButtonDown(0))
-            _isFireButtonPressed = true;
-        if (Input.GetMouseButtonDown(1))
-            _isRockedFireButtonPressed = true;
-
-        if (Input.GetKeyDown(KeyCode.G))
-            _isGrenadeFireButtonPressed = true;
-        
-#else
-        //View input
-        Vector3 direction1 = Vector3.forward * _joystickR.Vertical + Vector3.right * _joystickR.Horizontal;
-        _viewInputVector.x = direction1.x;
-        _viewInputVector.y = direction1.z * -1; //Invert the mouse look
-        
-        Vector3 direction = Vector3.forward * _joystickM.Vertical + Vector3.right * _joystickM.Horizontal;
-        _moveInputVector.x = direction.x;
-         _moveInputVector.y = direction.z;
-#endif
         //Set view
         _localCameraHandler.SetViewInputVector(_viewInputVector);
 

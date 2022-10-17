@@ -8,8 +8,8 @@ public class WeaponHandler : NetworkBehaviour
 {
     private const float  HIT_DISTANCE = 100;
     private const float  FIRE_TIMEOUT = 0.25F;
-    private const float  ROCKET_TIMEOUT = 3.5F;
-    private const float  GRENADE_TIMEOUT = 2F;
+    private const float  ROCKET_TIMEOUT = 1F;
+    private const float  GRENADE_TIMEOUT = 1F;
     
     
     [Header("Prefabs")] 
@@ -140,10 +140,11 @@ public class WeaponHandler : NetworkBehaviour
                 Quaternion.LookRotation(aimForwardVector),
                 Object.InputAuthority, (runner, spawnedGrenade) =>
                 {
-                    spawnedGrenade.GetComponent<GrenadeHandler>().Throw(aimForwardVector * 15,
+                    spawnedGrenade.GetComponent<GrenadeHandler>().Throw(
                         Object.InputAuthority,
                         _networkPlayer.nickName.ToString(),
-                        _networkPlayer
+                        _networkPlayer, 
+                        aimForwardVector * 15
                     );
                 });
             
@@ -160,10 +161,12 @@ public class WeaponHandler : NetworkBehaviour
                 Quaternion.LookRotation(aimForwardVector),
                 Object.InputAuthority, (runner, spawnedRocked) =>
                 {
-                    spawnedRocked.GetComponent<RocketHandler>().Fire(Object.InputAuthority,
-                        _networkObject,
+                    spawnedRocked.GetComponent<RocketHandler>().Fire(
+                        Object.InputAuthority,
                         _networkPlayer.nickName.ToString(),
-                        _networkPlayer
+                        _networkPlayer,
+                        aimForwardVector * 15,
+                        _networkObject
                     );
                 });
             

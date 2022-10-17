@@ -16,8 +16,8 @@ public class GrenadeHandler : NetworkBehaviour
    [Header("Collision detection")] 
    [SerializeField] private LayerMask _collisionLayers;
    
-   private PlayerRef _throwByPlayerRef;
-   private string _throwByPlayer;
+   private PlayerRef _playerRef;
+   private string _ownerPlayerName;
    
    private TickTimer _explodeTickTimer = TickTimer.None;
 
@@ -27,49 +27,51 @@ public class GrenadeHandler : NetworkBehaviour
    private NetworkRigidbody _networkRigidbody;
    private NetworkPlayer _networkPlayer;
    
-   public void Throw(Vector3 throwForce, PlayerRef throwByPlayerRef, string throwByPlayer, NetworkPlayer networkPlayer)
+   public void Throw(PlayerRef playerRef, string ownerPlayerName, NetworkPlayer networkPlayer, Vector3 throwForce)
    {
       _networkObject = GetComponent<NetworkObject>();
       _networkRigidbody = GetComponent<NetworkRigidbody>();
       
       _networkRigidbody.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
 
-      _throwByPlayerRef = throwByPlayerRef;
-      _throwByPlayer = throwByPlayer;
+      _playerRef = playerRef;
+      _ownerPlayerName = ownerPlayerName;
       _networkPlayer = networkPlayer;
-      _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
       
+      _explodeTickTimer = TickTimer.CreateFromSeconds(Runner, SECOND);
    }
 
    public override void FixedUpdateNetwork()
    {
-      // if (Object.HasInputAuthority)
-      // {
-      if (_explodeTickTimer.Expired(Runner))
+      if (Runner.IsServer)
       {
-         int hitCounter =
-            Runner.LagCompensation.OverlapSphere(transform.position,
-               10,
-               _throwByPlayerRef, 
-               _hits, 
-               _collisionLayers
-               );
-
-         for (var i = 0; i < hitCounter; i++)
+         
+         if (_explodeTickTimer.Expired(Runner))
          {
-            HPHandler hpHandler = _hits[i].Hitbox.transform.root.GetComponent<HPHandler>();
+            Debug.LogWarning("!!!!!"+_explodeTickTimer);
+            int hitCounter =
+               Runner.LagCompensation.OverlapSphere(transform.position,
+                  10,
+                  _playerRef, 
+                  _hits, 
+                  _collisionLayers
+                  );
 
-            if (hpHandler != null)
+            for (var i = 0; i < hitCounter; i++)
             {
-               hpHandler.OnTakeDamage(_throwByPlayer, 3, _networkPlayer);
+               HPHandler hpHandler = _hits[i].Hitbox.transform.root.GetComponent<HPHandler>();
+
+               if (hpHandler != null)
+               {
+                  hpHandler.OnTakeDamage(_ownerPlayerName, 3, _networkPlayer);
+               }
             }
+           
+            Runner.Despawn(_networkObject);
+            
+            _explodeTickTimer = TickTimer.None;
          }
-         
-         Runner.Despawn(_networkObject);
-         
-         _explodeTickTimer = TickTimer.None;
       }
-      //}
    }
 
    public override void Despawned(NetworkRunner runner, bool hasState)
