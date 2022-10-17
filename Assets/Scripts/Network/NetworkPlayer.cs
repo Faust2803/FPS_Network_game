@@ -118,12 +118,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             if (Runner.IsServer && !IsEnd)
             {
-                var timer = MATCH_TIME;
-                if (_networkInGameMessages.GameTime > 0 )
-                {
-                    timer = _networkInGameMessages.GameTime;
-                }
-                _timer = TickTimer.CreateFromSeconds(Runner, timer);
+                _timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
             }
         }
         else

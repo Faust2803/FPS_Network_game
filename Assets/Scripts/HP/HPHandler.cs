@@ -74,7 +74,7 @@ public class HPHandler : NetworkBehaviour
 
         if (Object.HasInputAuthority)
             _uiOnHitImage.color = _uiOnHitColor;
-        SetHp();
+        //SetHp();
         yield return new WaitForSeconds(0.2f);
 
         _bodyMeshRenderer.material.color = _defaultMeshBodyColor;
@@ -83,6 +83,7 @@ public class HPHandler : NetworkBehaviour
         {
             _uiOnHitImage.color = new Color(0, 0, 0, 0);
         }
+        SetHp();
     }
 
     IEnumerator ServerReviveCO()
@@ -143,10 +144,9 @@ public class HPHandler : NetworkBehaviour
         // //Check if the HP has been decreased
         // if (newHP < oldHP)
 
-        if (changed.Behaviour.HP < STARTING_HP)
-        {
-            changed.Behaviour.OnHPReduced();
-        }
+        
+        changed.Behaviour.OnHPReduced();
+        
         
     }
 
