@@ -46,7 +46,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
     private void Start()
     {
-        if (Object.HasInputAuthority)
+        /*if (Object.HasInputAuthority)
         {
             //Disable main camera
             if (Camera.main != null)
@@ -62,24 +62,25 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             //Detach camera if enabled
             _localCameraHandler.transform.parent = null;
-        }
+        }*/
     }
 
 
     public override void FixedUpdateNetwork()
     {
-        // if (Object.HasInputAuthority && !IsEnd)
-        // {
-        //     var t = _timer.RemainingTime(Runner).Value;
-        //
-        //     if (_timer.Expired(Runner))
-        //     {
-        //         IsEnd = true;
-        //         _timer = TickTimer.None;
-        //     }
-        //     _inGameMessagesUIHander.OnGameTimeReceived((int)t);
-        //      
-        // }
+        if(Runner.IsServer && !IsEnd)
+        {
+            if (_timer.Expired(Runner))
+            {
+                IsEnd = true;
+                _timer = TickTimer.None;
+            }
+            else
+            {
+                _networkInGameMessages.SendInGameRPCTime((int)_timer.RemainingTime(Runner).Value);
+            }
+           
+        }
     }
 
     public override void Spawned()
@@ -92,7 +93,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             Utils.SetRenderLayerInChildren(_playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
 
             //Disable main camera
-            /*if (Camera.main != null)
+            if (Camera.main != null)
                 Camera.main.gameObject.SetActive(false);
 
             //Enable 1 audio listner
@@ -104,7 +105,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             _localCameraHandler.LocalCamera.enabled = true;
 
             //Detach camera if enabled
-            _localCameraHandler.transform.parent = null;*/
+            _localCameraHandler.transform.parent = null;
 
             //Enable UI for local player
             _localUI.SetActive(true);
@@ -115,9 +116,15 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             
             _inGameMessagesUIHander = LocalCameraHandler.GetComponentInChildren<InGameMessagesUIHander>();
 
-            
-            //_timer = TickTimer.CreateFromSeconds(Runner, MATCH_TIME);
-            
+            if (Runner.IsServer && !IsEnd)
+            {
+                var timer = MATCH_TIME;
+                if (_networkInGameMessages.GameTime > 0 )
+                {
+                    timer = _networkInGameMessages.GameTime;
+                }
+                _timer = TickTimer.CreateFromSeconds(Runner, timer);
+            }
         }
         else
         {

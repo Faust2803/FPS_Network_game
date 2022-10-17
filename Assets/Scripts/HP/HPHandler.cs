@@ -142,7 +142,12 @@ public class HPHandler : NetworkBehaviour
         //
         // //Check if the HP has been decreased
         // if (newHP < oldHP)
-        changed.Behaviour.OnHPReduced();
+
+        if (changed.Behaviour.HP < STARTING_HP)
+        {
+            changed.Behaviour.OnHPReduced();
+        }
+        
     }
 
     private void OnHPReduced()
