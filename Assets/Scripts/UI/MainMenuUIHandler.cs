@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Zenject;
 
 public class MainMenuUIHandler : MonoBehaviour
 {
@@ -10,6 +11,15 @@ public class MainMenuUIHandler : MonoBehaviour
     [SerializeField] private Button _entryButton;
     [SerializeField] private GameObject _legenda;
 
+    private GameManager _gameManager;
+    
+    
+    [Inject]
+    private void Construct(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -40,9 +50,10 @@ public class MainMenuUIHandler : MonoBehaviour
         PlayerPrefs.SetString("PlayerNickname", _inputField.text);
         PlayerPrefs.Save();
 
-        GameManager.instance.playerNickName = _inputField.text;
+        _gameManager.playerNickName = _inputField.text;
 
         SceneManager.LoadScene("World1");
+        //SceneManager.LoadScene("Test");
     }
 
 }

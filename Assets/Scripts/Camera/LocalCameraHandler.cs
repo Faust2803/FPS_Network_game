@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Zenject;
 
 public class LocalCameraHandler : MonoBehaviour
 {
@@ -18,7 +19,8 @@ public class LocalCameraHandler : MonoBehaviour
     //Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
    
-
+    [Inject] private GameManager _gameManager;
+    
     private void Awake()
     {
         LocalCamera = GetComponent<Camera>();
@@ -28,8 +30,8 @@ public class LocalCameraHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _cameraRotationX = GameManager.instance.cameraViewRotation.x;
-        _cameraRotationY = GameManager.instance.cameraViewRotation.y;
+        _cameraRotationX = _gameManager.cameraViewRotation.x;
+        _cameraRotationY = _gameManager.cameraViewRotation.y;
     }
 
     void LateUpdate()
@@ -62,8 +64,8 @@ public class LocalCameraHandler : MonoBehaviour
     {
         if (_cameraRotationX != 0 && _cameraRotationY != 0)
         {
-            GameManager.instance.cameraViewRotation.x = _cameraRotationX;
-            GameManager.instance.cameraViewRotation.y = _cameraRotationY;
+            _gameManager.cameraViewRotation.x = _cameraRotationX;
+            _gameManager.cameraViewRotation.y = _cameraRotationY;
         }
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
+using Zenject;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -12,7 +13,14 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     private CharacterInputHandler _characterInputHandler;
     // Mapping between Token ID and Re-created Players
     private Dictionary<int, NetworkPlayer> _mapTokenIDWithNetworkPlayer;
-    // Start is called before the first frame update
+    
+    private GameManager _gameManager;
+    public GameManager GameManager
+    {
+        get => _gameManager;
+        set => _gameManager = value;
+    }
+    
     
     void Awake()
     {
@@ -20,12 +28,12 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
         _mapTokenIDWithNetworkPlayer = new Dictionary<int, NetworkPlayer>();
     }
 
-    int GetPlayerToken(NetworkRunner runner, PlayerRef player)
+    private int GetPlayerToken(NetworkRunner runner, PlayerRef player)
     {
         if (runner.LocalPlayer == player)
         {
             // Just use the local Player Connection Token
-            return ConnectionTokenUtils.HashToken(GameManager.instance.GetConnectionToken());
+            return ConnectionTokenUtils.HashToken(GameManager.GetConnectionToken());
         }
         else
         {

@@ -6,20 +6,30 @@ using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using Zenject;
 
 public class NetworkRunnerHandler : MonoBehaviour
 {
     [SerializeField] private NetworkRunner _networkRunnerPrefab;
-
+    
+    private GameManager _gameManager;
     private NetworkRunner _networkRunner;
 
+    [Inject]
+    private void Construct(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+        Debug.Log("!!!!!!!!");
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
         _networkRunner = Instantiate(_networkRunnerPrefab);
+        _networkRunner.GetComponent<Spawner>().GameManager = _gameManager;
         _networkRunner.name = "Network runner";
 
-        var clientTask = InitializeNetworkRunner(_networkRunner, GameMode.AutoHostOrClient, GameManager.instance.GetConnectionToken(), NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
+        var clientTask = InitializeNetworkRunner(_networkRunner, GameMode.AutoHostOrClient, _gameManager.GetConnectionToken(), NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
 
         Debug.Log($"Server NetworkRunner started.");
     }
@@ -81,7 +91,7 @@ public class NetworkRunnerHandler : MonoBehaviour
             SceneManager = sceneManager,
             HostMigrationToken = hostMigrationToken,
             HostMigrationResume = HostMigrationResume,
-            ConnectionToken =  GameManager.instance.GetConnectionToken()
+            ConnectionToken =  _gameManager.GetConnectionToken()
         });
     }
 

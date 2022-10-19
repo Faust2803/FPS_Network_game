@@ -1,9 +1,11 @@
 using System;
+using Core;
 using UnityEngine;
 using Fusion;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.Serialization;
+using Zenject;
 
 public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 {
@@ -27,6 +29,15 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     public bool IsEnd { get; private set; }
 
     [Networked] public int token { get; set;}
+    
+    private GameManager _gameManager;
+    
+    [Inject]
+    private void Construct(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+        Debug.Log("!!!!!!!!");
+    }
     
     private bool _isPublicJoinMessageSent = false;
     //Other components
@@ -110,7 +121,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             //Enable UI for local player
             _localUI.SetActive(true);
 
-            RPC_SetNickName(GameManager.instance.playerNickName);
+            RPC_SetNickName(_gameManager.playerNickName);
 
             Debug.Log("Spawned local player");
             
